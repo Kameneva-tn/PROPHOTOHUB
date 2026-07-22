@@ -1,0 +1,761 @@
+/* ==========================================================
+   FONT
+   KyivType Sans — статичні нарізки (не variable), тому кожна
+   вага підключена окремим @font-face з власним font-weight.
+   ========================================================== */
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Thin.woff2') format('woff2');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Heavy.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'KyivType Sans';
+  src: url('../public/fonts/KyivTypeSans-Black.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-main: 'KyivType Sans', 'Inter', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  --c-black: #05060b;
+  --c-charcoal: #3e4042;
+  --c-ink: #000000;
+  --c-white: #eeeeee;
+  --c-white-100: #ffffff;
+  --c-grey-icon: #545557;
+  --c-watermark: rgba(255, 255, 255, 0.6);
+
+  --pill-bg: rgba(0, 0, 0, 0.29);
+
+  --container: 1637px;
+  --nav-h: 112px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-main);
+  background: var(--c-black);
+  color: var(--c-white-100);
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+.section-title {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: clamp(24px, 3.4vw, 36px);
+  padding: 43px 0 0;
+  margin: 0;
+  color: var(--c-white-100);
+}
+.section-title--dark { color: var(--c-ink); }
+
+.watermark {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 300;
+  font-size: clamp(9px, 1.2vw, 16px); /* вдвічі менше — застосовується і на "Залах", і на "Контактах" */
+  color: var(--c-watermark);
+  margin: 24px 0 0;
+}
+.watermark--light { color: var(--c-watermark); } /* тепер скрізь той самий білий 60% */
+
+/* ==========================================================
+   NAV
+   ========================================================== */
+.nav {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  gap: clamp(24px, 4vw, 64px);
+  flex-wrap: wrap;
+  padding: 44px 24px 0;
+}
+.nav__link {
+  font-size: clamp(10.4px, 0.88vw, 16px); /* -20% від clamp(13px, 1.1vw, 20px) */
+  font-weight: 300;
+  text-transform: uppercase;
+  color: var(--c-white-100);
+  opacity: .92;
+  transition: opacity .2s ease;
+}
+.nav__link:hover { opacity: 1; text-decoration: underline; text-underline-offset: 6px; }
+
+.nav__divider {
+  position: relative;
+  z-index: 5;
+  max-width: var(--container);
+  margin: 24px auto 0;
+  height: 1px;
+  background: rgba(255,255,255,0.35);
+}
+.nav__divider--light { background: rgba(255,255,255,0.25); }
+
+/* ==========================================================
+   PAGE 1 — HERO  (фон "дихає" — авто-зум по CSS keyframes, без скролу)
+   ========================================================== */
+.hero__scroller {
+  position: relative;
+  height: 100vh; /* скрол-джек прибрано — зум більше не залежить від скролу */
+}
+.hero__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--c-black);
+}
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.hero__bg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: 62% 55%; /* тримаємо фокус на персонажі кадру */
+  animation: heroBgZoom 30s ease-in-out infinite;
+}
+@keyframes heroBgZoom {
+  0%   { transform: scale(1); }    /* старт */
+  50%  { transform: scale(1.3); }  /* +30% за 15с */
+  100% { transform: scale(1); }    /* назад за наступні 15с */
+}
+
+.hero__cta {
+  position: absolute;
+  left: 50%;
+  bottom: 8.3%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* точна відстань лого ↔ кнопка, незалежна від vw/% розрахунків */
+}
+
+.hero__portrait {
+  /* Файл раніше був 900×900, а видимий напис усередині — лише смуга
+     768×320 по центру (решта — прозорі поля). Через це aspect-ratio:1/1
+     робив коробку майже вдвічі вищою за сам напис, і будь-який gap рахувався
+     від краю "порожньої" коробки, а не від реального лого — звідси "не змінилось".
+     PNG обрізаний впритул (796×348), тож тепер коробка = видимий напис. */
+  width: min(16.7vw, 325px); /* та сама видима ширина лого, що й раніше — розмір лого не міняли, тільки прибрали порожнечу */
+  aspect-ratio: 796 / 348;
+  /* z-index навмисно прибраний: він створював власний stacking context і
+     ІЗОЛЮВАВ mix-blend-mode:screen на картинці всередині від фону з .hero__bg —
+     тому чорний квадрат лого не "зникав", а лишався суцільним чорним блоком
+     з жорсткою рамкою по краю. DOM-порядок (portrait іде одразу після bg)
+     і без z-index кладе лого зверху фону так само надійно. */
+}
+.hero__portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;     /* показуємо лого повністю, без обрізки */
+}
+
+.btn-book {
+  position: relative; /* лишається у flex-потоці .hero__cta, але це "якір" для ::before/::after (sheen/шум) */
+  background: var(--pill-bg);
+  backdrop-filter: blur(14px) saturate(160%);   /* "скло" — заміна Refraction/Splay з Figma */
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.28);
+  color: var(--c-white);
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: clamp(13px, 1.17vw, 20.8px);       /* мінімум піднятий з 9.6px до 13px — на мобільному це вже було нечитабельно */
+  padding: clamp(10px, 1.07vw, 14.4px) clamp(18px, 2.13vw, 32px); /* мінімум padding теж піднятий — замалий tap-target на телефоні */
+  border-radius: 999px;
+  letter-spacing: .02em;
+  overflow: hidden;      /* тримає sheen/шум в межах пігулки */
+  isolation: isolate;    /* blend-режими нижче не "витікають" на сторінку */
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,.35),  /* верхній відблиск — Light -45° */
+    inset 0 -1px 2px rgba(0,0,0,.4),        /* нижня грань — Depth */
+    0 10px 26px rgba(0,0,0,.35);            /* зовнішня тінь товщини скла */
+  transition: transform .25s ease, background .25s ease;
+}
+.btn-book::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.45) 0%, rgba(255,255,255,.1) 38%, rgba(255,255,255,0) 65%);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+.btn-book::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: .05;          /* Frost — зернистість поверх скла */
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.btn-book:hover { transform: translateY(-3px); background: rgba(0,0,0,.45); } /* без translateX(-50%) — центрування тепер робить .hero__cta */
+
+.hero .watermark {
+  margin: 0; /* тепер це третій елемент .hero__cta — позицію й відстань задає flex-gap батька */
+  font-size: clamp(7.8px, 1.04vw, 13.9px); /* +30% від попереднього clamp(6px, 0.8vw, 10.7px) */
+}
+
+.call-fab {
+  position: absolute;
+  right: 4.5%;
+  bottom: 8.5%;
+  z-index: 6;
+  width: clamp(56px, 6vw, 112px);
+  height: clamp(56px, 6vw, 112px);
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 24px rgba(0,0,0,.35);
+  transition: transform .2s ease;
+}
+.call-fab img { width: 60%; height: 60%; }
+.call-fab:hover { transform: scale(1.06); }
+
+/* ==========================================================
+   PAGE 2 — HALLS
+   ========================================================== */
+.halls {
+  position: relative;
+  background: linear-gradient(to bottom, var(--c-black), var(--c-charcoal));
+  padding: 0 0 60px;
+}
+.halls__grid {
+  max-width: var(--container);
+  margin: 40px auto 0;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 2vw, 48px);
+}
+.hall-col {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.hall-col__title {
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: clamp(16px, 1.9vw, 24px);
+}
+.hall-col__photo-wrap {
+  display: block;
+  overflow: hidden;
+  border-radius: 18px;
+  aspect-ratio: 530 / 805;
+}
+.hall-col__photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+  will-change: transform;
+}
+.hall-col:hover .hall-col__photo { transform: scale(1.05); }
+.hall-col[aria-expanded="true"] .hall-col__photo { transform: scale(1.05); }
+
+.hall-info {
+  max-width: var(--container);
+  margin: 32px auto 0;
+  padding: 32px clamp(20px, 4vw, 48px);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 24px;
+  position: relative;
+}
+.hall-info__close {
+  position: absolute;
+  top: 16px; right: 20px;
+  background: none;
+  border: none;
+  color: var(--c-white-100);
+  font-size: 28px;
+  line-height: 1;
+}
+.hall-info__content { display: grid; gap: 18px; }
+/* Циклорама/Зал тощо — за фігмою лейбл і число стоять В ОДНОМУ рядку,
+   "число більше за назву" — це різниця ваги шрифту (thin vs black),
+   а не розміру: обидва мають однаковий font-size. Рядки (dim, area)
+   стековані одне під одним, а не поруч колонками. */
+.hall-info__row { display: flex; flex-direction: column; gap: 4px; }
+.hall-info__dim {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.hall-info__dim span { font-size: inherit; font-weight: 300; opacity: .7; }
+.hall-info__features { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.hall-info__features li { display: flex; align-items: center; gap: 12px; font-size: clamp(15px, 1.4vw, 20px); text-transform: uppercase; }
+.hall-info__features li::before {
+  content: '';
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--c-white-100);
+  flex: none;
+}
+.hall-info__note { font-size: clamp(15px, 1.4vw, 20px); text-transform: uppercase; opacity: .85; }
+
+.hall-info__price {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 14px 20px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 14px;
+  width: fit-content;
+}
+.hall-info__price-amount { margin: 0; font-weight: 800; text-transform: uppercase; font-size: clamp(14px, 1.6vw, 20px); }
+.hall-info__price-note { margin: 0; font-size: 12px; opacity: .65; text-transform: uppercase; }
+
+/* ==========================================================
+   PAGE 3 — BOOKING
+   ========================================================== */
+.booking {
+  background: var(--c-white-100);
+  color: var(--c-ink);
+  padding-bottom: 80px;
+}
+.booking__box {
+  max-width: 900px;
+  margin: 48px auto 0;
+  padding: 0 24px;
+  display: grid;
+  gap: 48px;
+}
+.booking__step-label {
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+
+.hall-tabs { display: flex; gap: 12px; flex-wrap: wrap; }
+.hall-tab {
+  border: 1px solid var(--c-ink);
+  background: none;
+  padding: 12px 22px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background .2s ease, color .2s ease;
+}
+.hall-tab.is-active,
+.hall-tab:hover { background: var(--c-ink); color: var(--c-white-100); }
+
+/* Крок 2: сітка "дні (горизонталь) × години (вертикаль)" з ціною в комірці */
+.hour-grid__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.hour-grid__nav {
+  border: 1px solid var(--c-ink);
+  background: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  flex: none;
+}
+.hour-grid__nav:hover { background: var(--c-ink); color: var(--c-white-100); }
+.hour-grid__range {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+.hour-grid__today {
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  opacity: .7;
+}
+.hour-grid__today:hover { opacity: 1; }
+
+.hour-grid__scroll {
+  overflow-x: auto;
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  padding: 6px;
+}
+.hour-grid__table { border-collapse: collapse; width: 100%; min-width: 760px; }
+.hour-grid__table th, .hour-grid__table td { padding: 3px; text-align: center; }
+.hour-grid__table thead th {
+  font-size: 11px;
+  font-weight: 700;
+  padding-bottom: 8px;
+  white-space: nowrap;
+}
+.hour-grid__corner { width: 64px; }
+.hour-grid__daynum { display: block; font-size: 14px; }
+.hour-grid__wd { display: block; font-size: 10px; opacity: .55; text-transform: uppercase; }
+.hour-grid__table thead th.is-today .hour-grid__daynum { text-decoration: underline; text-underline-offset: 3px; }
+.hour-grid__hourlabel {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: .7;
+  white-space: nowrap;
+  text-align: right;
+  padding-right: 8px;
+}
+
+.hour-cell {
+  width: 100%;
+  min-width: 56px;
+  border: 1px solid #e2e2e2;
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 8px 4px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background .15s ease, color .15s ease;
+}
+.hour-cell:not(:disabled):hover { background: var(--c-ink); color: var(--c-white-100); }
+.hour-cell.is-selected { background: var(--c-ink); color: var(--c-white-100); }
+.hour-cell:disabled { background: #efefef; color: #bbb; cursor: not-allowed; opacity: .7; }
+.hour-cell__lock { font-size: 12px; }
+
+.hour-grid__legend {
+  margin-top: 14px;
+  font-size: 12px;
+  opacity: .65;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.legend-dot--free { background: #f7f7f7; border: 1px solid #e2e2e2; }
+.legend-dot--booked { background: #efefef; border: 1px solid #ddd; }
+
+.booking-summary {
+  font-size: 14px;
+  line-height: 1.7; /* тепер тут може бути список із кількох обраних годин */
+  padding: 14px 18px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.field { display: block; margin-bottom: 16px; }
+.field span { display: block; font-size: 13px; text-transform: uppercase; opacity: .6; margin-bottom: 6px; }
+.field input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--c-ink);
+  padding: 10px 2px;
+  font-size: 16px;
+  background: none;
+  font-family: inherit;
+}
+.field input:focus { outline: none; border-bottom-width: 2px; }
+
+.checkbox { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; margin-bottom: 24px; }
+.checkbox input { margin-top: 3px; }
+
+.btn-submit {
+  width: 100%;
+  background: var(--c-ink);
+  color: var(--c-white-100);
+  border: none;
+  padding: 18px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 16px;
+  transition: opacity .2s ease;
+}
+.btn-submit:hover { opacity: .85; }
+.btn-submit:disabled { opacity: .4; cursor: not-allowed; }
+
+.booking-form__status { margin-top: 12px; font-size: 14px; min-height: 20px; }
+.booking-form__status.ok { color: #17803d; }
+.booking-form__status.err { color: #c0392b; }
+
+/* ==========================================================
+   PAGE 4 — ОБЛАДНАННЯ
+   ========================================================== */
+.equipment {
+  position: relative;
+  background: linear-gradient(to bottom, var(--c-charcoal), var(--c-black));
+  padding: 0 0 60px;
+}
+.equipment__grid {
+  max-width: var(--container);
+  margin: 40px auto 0;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+}
+.equip-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 24px;
+  padding: clamp(24px, 3vw, 40px);
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+.equip-card__head { display: flex; }
+.equip-card__zal {
+  display: inline-flex;
+  gap: 8px;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 300;
+  opacity: .85;
+}
+.equip-card__zal b { font-weight: 800; }
+.equip-card__title {
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.05;
+}
+.equip-card__title-sub { display: block; font-weight: 200; font-size: .45em; opacity: .85; }
+.equip-card__included {
+  justify-self: start;
+  background: var(--c-white-100);
+  color: var(--c-ink);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.equip-card__items { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.equip-card__items li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 10px;
+}
+.equip-card__item-photo {
+  flex: none;
+  width: 84px;
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.equip-card__item-photo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.equip-card__item-info { display: grid; gap: 2px; }
+.equip-card__item-name { font-weight: 700; text-transform: uppercase; font-size: clamp(13px, 1.3vw, 16px); }
+.equip-card__item-name b { font-weight: 900; }
+.equip-card__item-brand { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; opacity: .55; }
+
+.equip-card__specs { display: grid; gap: 14px; margin-top: 4px; }
+.equip-card__spec-title { margin: 0 0 4px; font-weight: 800; text-transform: uppercase; font-size: 13px; }
+.equip-card__spec-title::before { content: '• '; }
+.equip-card__spec-text { margin: 0; font-size: 13px; line-height: 1.5; opacity: .75; padding-left: 14px; }
+
+.equip-card__note {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  opacity: .7;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+}
+
+/* ==========================================================
+   PAGE 5 — CONTACTS
+   ========================================================== */
+.contacts {
+  background: linear-gradient(to bottom, var(--c-black), var(--c-charcoal));
+  padding: 0 0 70px;
+}
+.contacts__grid {
+  max-width: var(--container);
+  margin: 40px auto 0;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(24px, 4vw, 48px);
+  text-align: center;
+}
+.contacts__label {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: clamp(11.2px, 1.12vw, 16.8px); /* -30% від clamp(16px, 1.6vw, 24px) */
+  margin: 0 0 14px;
+}
+.contacts__text {
+  font-size: clamp(10.5px, 0.98vw, 16.8px); /* -30% від clamp(15px, 1.4vw, 24px) */
+  line-height: 1.5;
+  margin: 0 0 6px;
+  text-transform: uppercase;
+}
+.contacts__small { font-size: 9.8px; opacity: .7; text-transform: none; } /* -30% від 14px */
+.contacts__insta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.contacts__insta img { width: 22px; height: 22px; }
+.contacts__phone-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: 0;
+}
+.contacts .watermark { font-size: clamp(6.3px, 0.84vw, 11.2px); } /* -30% від базового watermark, як і решта текстів тут */
+
+/* ==========================================================
+   CALLBACK MODAL
+   ========================================================== */
+.modal {
+  position: fixed; inset: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal[hidden] { display: none; }
+.modal__backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.6);
+}
+.modal__box {
+  position: relative;
+  background: var(--c-white-100);
+  color: var(--c-ink);
+  border-radius: 20px;
+  padding: 32px;
+  width: 100%;
+  max-width: 380px;
+}
+.modal__box h3 { margin: 0 0 20px; text-transform: uppercase; font-size: 20px; }
+.modal__close {
+  position: absolute; top: 14px; right: 16px;
+  background: none; border: none; font-size: 24px;
+}
+
+/* ==========================================================
+   RESPONSIVE
+   Два рівні: планшет (≤900px) — 3-колонкові гріди стають 1-колонкою;
+   телефон (≤600px) — щільніші відступи й запобіжники від горизонтального скролу.
+   ========================================================== */
+@media (max-width: 900px) {
+  .halls__grid, .contacts__grid, .equipment__grid { grid-template-columns: 1fr; }
+  .hero__portrait { width: 35.8vw; } /* та сама видима ширина, що й раніше (42vw квадрата ×0.853 видимої частини) — тепер без обрізаного зайвого поля */
+  .hero__scroller { height: 100vh; }
+}
+
+@media (max-width: 600px) {
+  html, body { overflow-x: hidden; } /* запобіжник від випадкового горизонтального скролу */
+
+  .nav { gap: 12px 18px; padding: 28px 16px 0; }
+
+  .hero__portrait { width: 45.4vw; } /* та сама видима ширина, що й раніше (53.2vw квадрата ×0.853 видимої частини) */
+  .call-fab { right: 5%; bottom: 7%; }
+
+  .halls__grid, .equipment__grid, .contacts__grid { padding: 0 16px; }
+  .hall-info { padding: 24px 16px; }
+
+  .equip-card { padding: 20px; }
+  .equip-card__items li { padding: 8px; gap: 12px; }
+  .equip-card__item-photo { width: 60px; height: 60px; }
+  .equip-card__title { font-size: clamp(22px, 8vw, 32px); }
+
+  .hall-info__dim { flex-wrap: wrap; row-gap: 0; }
+
+  .booking__box { padding: 0 16px; }
+  .modal__box { padding: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hero__bg-img { animation: none !important; transition: none !important; }
+}

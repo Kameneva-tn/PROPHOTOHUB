@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ФОТОстудія у центрі Києва</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ================= PAGE 1 — HOME / HERO ================= -->
+<header class="hero" id="home">
+  <div class="hero__scroller">
+    <div class="hero__pin">
+      <div class="hero__bg" id="heroBg">
+        <img src="public/assets/hero-bg.jpg" alt="Фотостудія" class="hero__bg-img" id="heroBgImg">
+      </div>
+
+      <nav class="nav">
+        <a href="#booking" class="nav__link">Бронювання</a>
+        <a href="#hall-tsyklorama" class="nav__link">Циклорама</a>
+        <a href="#hall-podcast" class="nav__link">Подкаст зала</a>
+        <a href="#hall-grymerna" class="nav__link">Гримерна</a>
+        <a href="#equipment" class="nav__link">Обладнання</a>
+        <a href="#contacts" class="nav__link">Контакти</a>
+      </nav>
+      <div class="nav__divider"></div>
+
+      <div class="hero__cta">
+        <div class="hero__portrait" id="heroPortrait">
+          <img src="public/assets/hero-logo-transparent.png" alt="" class="hero__portrait-img" id="heroPortraitImg">
+        </div>
+
+        <a href="#booking" class="btn-book">Забронювати</a>
+
+        <p class="watermark">ФОТОстудія у центрі Києва</p>
+      </div>
+
+      <button class="call-fab" id="callFab" aria-label="Передзвоніть мені" aria-haspopup="dialog">
+        <img src="public/assets/phone-icon.svg" alt="">
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= PAGE 2 — HALLS ================= -->
+<section class="halls" id="halls">
+  <div class="halls__grid">
+
+    <button class="hall-col" id="hall-tsyklorama" data-hall="tsyklorama" aria-expanded="false">
+      <span class="hall-col__title">Циклорама</span>
+      <span class="hall-col__photo-wrap">
+        <img src="public/assets/hall-tsyklorama.jpg" alt="Циклорама" class="hall-col__photo" data-parallax="0.15">
+      </span>
+    </button>
+
+    <button class="hall-col" id="hall-podcast" data-hall="podcast" aria-expanded="false">
+      <span class="hall-col__title">Подкаст зала</span>
+      <span class="hall-col__photo-wrap">
+        <img src="public/assets/hall-podcast.jpg" alt="Подкаст зала" class="hall-col__photo" data-parallax="0.08">
+      </span>
+    </button>
+
+    <button class="hall-col" id="hall-grymerna" data-hall="grymerna" aria-expanded="false">
+      <span class="hall-col__title">Гримерна</span>
+      <span class="hall-col__photo-wrap">
+        <img src="public/assets/hall-grymerna.jpg" alt="Гримерна" class="hall-col__photo" data-parallax="0.15">
+      </span>
+    </button>
+
+  </div>
+
+  <!-- info panels are injected by JS from data in js/halls-data.js -->
+  <div class="hall-info" id="hallInfo" hidden>
+    <button class="hall-info__close" id="hallInfoClose" aria-label="Закрити">×</button>
+    <div class="hall-info__content" id="hallInfoContent"></div>
+  </div>
+
+  <p class="watermark watermark--light">ФОТОстудія у центрі Києва</p>
+</section>
+
+<!-- ================= PAGE 3 — BOOKING ================= -->
+<section class="booking" id="booking">
+  <h2 class="section-title section-title--dark">Бронювання</h2>
+
+  <div class="booking__box">
+
+    <div class="booking__step" data-step="1">
+      <p class="booking__step-label">1. Оберіть зал</p>
+      <div class="hall-tabs" id="hallTabs">
+        <button class="hall-tab is-active" data-hall="tsyklorama" type="button">Циклорама</button>
+        <button class="hall-tab" data-hall="podcast" type="button">Подкаст зала</button>
+        <button class="hall-tab" data-hall="grymerna" type="button">Гримерна</button>
+      </div>
+    </div>
+
+    <div class="booking__step" data-step="2">
+      <p class="booking__step-label">2. Оберіть дату та час</p>
+
+      <div class="hour-grid" id="hourGrid">
+        <div class="hour-grid__head">
+          <button class="hour-grid__nav" id="gridPrev" type="button" aria-label="Попередні дні">‹</button>
+          <div class="hour-grid__range">
+            <span id="gridRangeLabel"></span>
+            <button class="hour-grid__today" id="gridToday" type="button">Сьогодні</button>
+          </div>
+          <button class="hour-grid__nav" id="gridNext" type="button" aria-label="Наступні дні">›</button>
+        </div>
+
+        <div class="hour-grid__scroll">
+          <table class="hour-grid__table" id="hourGridTable"></table>
+        </div>
+
+        <p class="hour-grid__legend">
+          <span><span class="legend-dot legend-dot--free"></span>Доступно (ціна за годину)</span>
+          <span><span class="legend-dot legend-dot--booked"></span>Заброньовано / недоступно</span>
+        </p>
+      </div>
+    </div>
+
+    <form class="booking__step booking-form" data-step="3" id="bookingForm">
+      <p class="booking__step-label">3. Ваші контакти</p>
+
+      <div class="booking-summary" id="bookingSummary">Зал і час ще не обрано</div>
+
+      <label class="field">
+        <span>Ім'я</span>
+        <input type="text" name="name" required placeholder="Ваше ім'я">
+      </label>
+      <label class="field">
+        <span>Номер телефону</span>
+        <input type="tel" name="phone" required placeholder="+380 __ ___ __ __">
+      </label>
+
+      <label class="checkbox">
+        <input type="checkbox" name="consent" required>
+        <span>Даю згоду на обробку персональних даних</span>
+      </label>
+
+      <button type="submit" class="btn-submit">Забронювати</button>
+      <p class="booking-form__status" id="bookingStatus"></p>
+    </form>
+
+  </div>
+</section>
+
+<!-- ================= PAGE 4 — ОБЛАДНАННЯ ================= -->
+<section class="equipment" id="equipment">
+  <h2 class="section-title">Обладнання</h2>
+
+  <div class="equipment__grid">
+
+    <article class="equip-card">
+      <div class="equip-card__head">
+        <span class="equip-card__zal">Зал <b>Циклорама</b></span>
+      </div>
+      <h3 class="equip-card__title"><span class="equip-card__title-sub">Спалахи</span> Імпульсні</h3>
+      <span class="equip-card__included">*включено у вартість</span>
+
+      <ul class="equip-card__items">
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-godox-qs600.png" alt="Godox QS600 II"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">QS600 Дж <b>2 шт</b></span>
+            <span class="equip-card__item-brand">Godox</span>
+          </span>
+        </li>
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-godox-qs400.png" alt="Godox QS400 II"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">QS400 Дж <b>2 шт</b></span>
+            <span class="equip-card__item-brand">Godox</span>
+          </span>
+        </li>
+      </ul>
+
+      <div class="equip-card__specs">
+        <div class="equip-card__spec">
+          <p class="equip-card__spec-title">Синхронізація</p>
+          <p class="equip-card__spec-text">за передньою, задньою шторкою + високошвидкісна синхронізація до 1/2000</p>
+        </div>
+        <div class="equip-card__spec">
+          <p class="equip-card__spec-title">Регулювання потужності</p>
+          <p class="equip-card__spec-text">спалахів по групах: з одного синхронізатора ви окремо керуєте кожним спалахом дистанційно</p>
+        </div>
+        <div class="equip-card__spec">
+          <p class="equip-card__spec-title">Швидкість перезарядки</p>
+          <p class="equip-card__spec-text">від 0,3 секунди</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="equip-card">
+      <div class="equip-card__head">
+        <span class="equip-card__zal">Зал <b>Контент</b></span>
+      </div>
+      <h3 class="equip-card__title"><span class="equip-card__title-sub">Світло</span> Постійне</h3>
+      <span class="equip-card__included">*включено у вартість</span>
+
+      <ul class="equip-card__items">
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-ulanzi-gobo.png" alt="Ulanzi Гобо LM01"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">Ліхтар · Гобо LM01</span>
+            <span class="equip-card__item-brand">Ulanzi</span>
+          </span>
+        </li>
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-ulanzi-40vrgb.png" alt="Ulanzi 40V RGB"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">Ліхтар · 40V RGB</span>
+            <span class="equip-card__item-brand">Ulanzi</span>
+          </span>
+        </li>
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-ulanzi-ledtube.png" alt="Ulanzi LED труба RGB 38Вт"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">LED труба · RGB 38Вт</span>
+            <span class="equip-card__item-brand">Ulanzi</span>
+          </span>
+        </li>
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-const-acprof-150.png" alt="AC Prof 150B Bi-Color"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">150B Bi-Color <b>CRI 95+</b></span>
+            <span class="equip-card__item-brand">AC Prof</span>
+          </span>
+        </li>
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-const-ulanzi-150-reflector.png" alt="Ulanzi 150B Bi-Color з рефлектором"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">150B Bi-Color <b>CRI 95+</b></span>
+            <span class="equip-card__item-brand">Ulanzi</span>
+          </span>
+        </li>
+        <li>
+          <span class="equip-card__item-photo"><img src="public/assets/equip-const-ulanzi-120-studiolight.png" alt="Ulanzi Studio Light 120B Bi-Color"></span>
+          <span class="equip-card__item-info">
+            <span class="equip-card__item-name">120B Bi-Color <b>CRI 95+</b></span>
+            <span class="equip-card__item-brand">Ulanzi</span>
+          </span>
+        </li>
+      </ul>
+
+      <p class="equip-card__note">Надається за попереднім бронюванням або якщо вільне без бронювання</p>
+    </article>
+
+  </div>
+
+  <p class="watermark watermark--light">ФОТОстудія у центрі Києва</p>
+</section>
+
+<!-- ================= PAGE 5 — CONTACTS ================= -->
+<footer class="contacts" id="contacts">
+  <h2 class="section-title">Контакти</h2>
+  <div class="nav__divider nav__divider--light"></div>
+
+  <div class="contacts__grid">
+    <div class="contacts__col">
+      <p class="contacts__label">Адреса:</p>
+      <p class="contacts__text">м. Київ,<br>вул. Саксаганського 24/25<br>2 під'їзд, 2 поверх</p>
+    </div>
+
+    <div class="contacts__col">
+      <p class="contacts__label">Зв'язатись з нами:</p>
+      <p class="contacts__text">
+        <a href="https://instagram.com/prophoto.hub" target="_blank" rel="noopener" class="contacts__insta">
+          <img src="public/assets/insta-icon.svg" alt="">
+          prophoto.hub
+        </a>
+      </p>
+      <p class="contacts__text">
+        <button type="button" class="contacts__phone-btn" id="contactsCallBtn">096 451 50 10</button>
+      </p>
+    </div>
+
+    <div class="contacts__col">
+      <p class="contacts__label">Режим роботи:</p>
+      <p class="contacts__text">
+        Денний час<br>10:00 – 20:00<br><br>
+        Нічний час<br><span class="contacts__small">+50% до вартості</span><br>
+        6:00 – 10:00<br>20:00 – 23:00
+      </p>
+    </div>
+  </div>
+
+  <p class="watermark watermark--light">ФОТОстудія у центрі Києва</p>
+</footer>
+
+<!-- ================= CALLBACK MODAL ================= -->
+<div class="modal" id="callModal" hidden>
+  <div class="modal__backdrop" id="callModalBackdrop"></div>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="callModalTitle">
+    <button class="modal__close" id="callModalClose" aria-label="Закрити">×</button>
+    <h3 id="callModalTitle">Передзвоніть мені</h3>
+    <form id="callbackForm">
+      <label class="field">
+        <span>Ім'я</span>
+        <input type="text" name="name" required placeholder="Ваше ім'я">
+      </label>
+      <label class="field">
+        <span>Номер телефону</span>
+        <input type="tel" name="phone" required placeholder="+380 __ ___ __ __">
+      </label>
+      <button type="submit" class="btn-submit">Передзвонити мені</button>
+      <p class="booking-form__status" id="callbackStatus"></p>
+    </form>
+  </div>
+</div>
+
+<script src="js/halls-data.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
