@@ -118,6 +118,7 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
       ${h.note ? `<p class="hall-info__note">${h.note}</p>` : ''}
       ${h.extra ? `<p class="hall-info__note">${h.extra}</p>` : ''}
       <div class="hall-info__price">${priceHtml}</div>
+      ${h.page ? `<a class="hall-info__more" href="${h.page}">Дивитись залу &rarr;</a>` : ''}
     `;
   }
 
@@ -203,6 +204,24 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
     }
     return dates;
   }
+
+  // Зал можна передати з URL: index.html#booking?hall=podcast (так роблять сторінки залів)
+  function hallFromUrl() {
+    const mm = location.hash.match(/hall=(tsyklorama|podcast|grymerna)/);
+    return mm ? mm[1] : null;
+  }
+  function selectHall(key) {
+    const tab = [...hallTabs].find((t) => t.dataset.hall === key);
+    if (tab) tab.click();
+  }
+  const initialHall = hallFromUrl();
+  if (initialHall) setTimeout(() => {
+    selectHall(initialHall);
+    // хеш виду #booking?hall=... браузер сам не скролить — робимо це вручну
+    const target = document.getElementById('booking');
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 0);
+  window.addEventListener('hashchange', () => { const k = hallFromUrl(); if (k) selectHall(k); });
 
   hallTabs.forEach((tab) => {
     tab.addEventListener('click', () => {
