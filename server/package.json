@@ -1,8 +1,8 @@
 {
-  "name": "studio-booking-server",
-  "version": "1.0.0",
+  "name": "prophoto-booking-server",
+  "version": "2.0.0",
   "private": true,
-  "description": "Backend для сайту фотостудії: календар бронювань + пересилка заявок у Telegram",
+  "description": "Бекенд PROPHOTO HUB: бронювання (PostgreSQL) + Telegram-сповіщення",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,9 +11,9 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "googleapis": "^144.0.0",
+    "pg": "^8.12.0"
   },
-  "engines": {
-    "node": ">=18"
-  }
+  "engines": { "node": ">=18" }
 }
