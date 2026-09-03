@@ -41,33 +41,30 @@
 <section class="halls" id="halls">
   <div class="halls__grid">
 
-    <button class="hall-col" id="hall-tsyklorama" data-hall="tsyklorama" aria-expanded="false">
+    <a class="hall-col" href="halls/cyclorama.html" data-hall="tsyklorama">
       <span class="hall-col__title">Циклорама</span>
-      <span class="hall-col__photo-wrap">
-        <img src="public/assets/hall-tsyklorama.jpg" alt="Циклорама" class="hall-col__photo" data-parallax="0.15">
+      <span class="hall-col__inner">
+        <span class="hall-col__photo-wrap"><img src="public/assets/hall-tsyklorama.jpg" alt="Циклорама" class="hall-col__photo"></span>
+        <span class="hall-card" data-hall-card="tsyklorama"></span>
       </span>
-    </button>
+    </a>
 
-    <button class="hall-col" id="hall-podcast" data-hall="podcast" aria-expanded="false">
+    <a class="hall-col" href="halls/content-studio.html" data-hall="podcast">
       <span class="hall-col__title">Подкаст зала</span>
-      <span class="hall-col__photo-wrap">
-        <img src="public/assets/hall-podcast.jpg" alt="Подкаст зала" class="hall-col__photo" data-parallax="0.08">
+      <span class="hall-col__inner">
+        <span class="hall-col__photo-wrap"><img src="public/assets/hall-podcast.jpg" alt="Подкаст зала" class="hall-col__photo"></span>
+        <span class="hall-card" data-hall-card="podcast"></span>
       </span>
-    </button>
+    </a>
 
-    <button class="hall-col" id="hall-grymerna" data-hall="grymerna" aria-expanded="false">
+    <a class="hall-col" href="halls/makeup-room.html" data-hall="grymerna">
       <span class="hall-col__title">Гримерна</span>
-      <span class="hall-col__photo-wrap">
-        <img src="public/assets/hall-grymerna.jpg" alt="Гримерна" class="hall-col__photo" data-parallax="0.15">
+      <span class="hall-col__inner">
+        <span class="hall-col__photo-wrap"><img src="public/assets/hall-grymerna.jpg" alt="Гримерна" class="hall-col__photo"></span>
+        <span class="hall-card" data-hall-card="grymerna"></span>
       </span>
-    </button>
+    </a>
 
-  </div>
-
-  <!-- info panels are injected by JS from data in js/halls-data.js -->
-  <div class="hall-info" id="hallInfo" hidden>
-    <button class="hall-info__close" id="hallInfoClose" aria-label="Закрити">×</button>
-    <div class="hall-info__content" id="hallInfoContent"></div>
   </div>
 
   <p class="watermark watermark--light">ФОТОстудія у центрі Києва</p>
@@ -108,7 +105,9 @@
         <p class="hour-grid__legend">
           <span><span class="legend-dot legend-dot--free"></span>Доступно (ціна за годину)</span>
           <span><span class="legend-dot legend-dot--booked"></span>Заброньовано / недоступно</span>
+          <button type="button" class="hour-grid__night-toggle" id="gridNight" aria-pressed="false">Показати нічні години (23:00–08:00)</button>
         </p>
+        <p class="hour-grid__tariff">Денний час 10:00–20:00 — базова ціна · 08:00–10:00 і 20:00–23:00 — +50% · нічний час 23:00–08:00 — +100%</p>
       </div>
     </div>
 
@@ -272,8 +271,8 @@
       <p class="contacts__label">Режим роботи:</p>
       <p class="contacts__text">
         Денний час<br>10:00 – 20:00<br><br>
-        Нічний час<br><span class="contacts__small">+50% до вартості</span><br>
-        6:00 – 10:00<br>20:00 – 23:00
+        08:00 – 10:00<br>20:00 – 23:00<br><span class="contacts__small">+50% до вартості</span><br><br>
+        Нічний час<br>23:00 – 08:00<br><span class="contacts__small">+100% до вартості</span>
       </p>
     </div>
   </div>
@@ -306,6 +305,7 @@
      Локально (npm start у server/) можна лишити порожнім — піде на /api того ж хоста. -->
 <script>window.STUDIO_API_BASE = 'https://prophoto-api.onrender.com/api';</script>
 <script src="js/halls-data.js"></script>
+<script src="js/hall-card.js"></script>
 <script src="js/main.js"></script>
 <script src="js/prophoto-nav.js" data-site="studio" data-mode="fixed"></script>
 </body>

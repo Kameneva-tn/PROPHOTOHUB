@@ -76,7 +76,7 @@ header h1 span{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:
 .block h2{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .block p{color:var(--dim);font-size:13px;margin-bottom:16px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hourpick{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.hourpick{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-bottom:14px}
 .hourpick label{display:block}
 .hourpick input{position:absolute;opacity:0;width:0;height:0}
 .hourpick span{display:block;text-align:center;border:1px solid var(--line);border-radius:10px;padding:9px 0;font-size:12px;font-weight:600;cursor:pointer;background:var(--panel2)}
@@ -163,7 +163,7 @@ header h1 span{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:
 
 <script>
 const API = window.STUDIO_API_BASE || '/api';
-const HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
+const HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00'];
 const HALLS = { tsyklorama:'Циклорама', podcast:'Подкаст зала', grymerna:'Гримерна' };
 const WD = ['неділя','понеділок','вівторок','середа','четвер','п\u2019ятниця','субота'];
 const pad = n => String(n).padStart(2,'0');
