@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ГРИМЕРНА — ProPhoto Studio</title>
+<meta name="description" content="Твоя зона краси та підготовки — з витяжкою, зручними столиками та доступом до води">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:#1c1a19;color:#f2f0eb;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased}
+img{display:block}
+.wrap{max-width:1500px;margin:0 auto;padding:0 40px}
+
+/* ---- заголовок ---- */
+.htitle{padding:150px 20px 40px;text-align:center}
+.htitle h1{font-weight:900;letter-spacing:-.02em;line-height:.95;font-size:clamp(30px,4.25vw,60px)}
+.htitle .facts{margin-top:18px;font-weight:300;font-size:clamp(15px,1.9vw,26px);letter-spacing:.06em;display:flex;gap:2.2em;justify-content:center;flex-wrap:wrap}
+.htitle .desc{margin-top:14px;color:#8a8886;font-weight:300;font-size:clamp(10px,1.1vw,14px);letter-spacing:.14em;text-transform:uppercase;line-height:1.6}
+
+/* ---- опис залу поруч із фото ---- */
+.intro{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:0;border-radius:22px;overflow:hidden;background:#0b0b0c;margin-bottom:56px}
+.intro__photo{aspect-ratio:3/4;overflow:hidden;cursor:zoom-in}
+.intro__photo img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.intro__photo:hover img{transform:scale(1.04)}
+.hall-card{display:flex;flex-direction:column;justify-content:center;gap:18px;padding:clamp(28px,4vw,60px)}
+.hall-card__head{display:flex;flex-direction:column;gap:4px}
+.hall-card__dim{font-size:clamp(24px,2.6vw,42px);font-weight:900;text-transform:uppercase;line-height:1.1}
+.hall-card__dim span{font-weight:300;opacity:.75}
+.hall-card__features{list-style:none;display:grid;gap:9px}
+.hall-card__features li{display:flex;align-items:center;gap:12px;font-size:clamp(14px,1.2vw,19px);text-transform:uppercase}
+.hall-card__features li::before{content:'';width:8px;height:8px;border-radius:50%;background:#fff;flex:none}
+.hall-card__note{font-size:clamp(13px,1.1vw,17px);text-transform:uppercase;opacity:.85;line-height:1.4}
+.hall-card__note--strong{font-weight:800;opacity:1}
+.hall-card__price{display:inline-flex;flex-direction:column;gap:3px;padding:14px 20px;border:1px solid rgba(255,255,255,.4);border-radius:12px;width:fit-content;margin-top:6px}
+.hall-card__price-amount{font-weight:800;text-transform:uppercase;font-size:clamp(14px,1.25vw,19px)}
+.hall-card__price-note{font-size:11px;opacity:.65;text-transform:uppercase}
+.hall-card .book{display:inline-block;margin-top:10px;background:#f2f0eb;color:#1c1a19;text-decoration:none;text-transform:uppercase;font-weight:800;font-size:14px;letter-spacing:.02em;padding:14px 32px;border-radius:999px;width:fit-content;transition:transform .2s}
+.hall-card .book:hover{transform:translateY(-2px)}
+
+/* ---- плитки ---- */
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:clamp(180px,22vw,330px);grid-auto-flow:dense;gap:14px;padding-bottom:90px}
+.tile{position:relative;overflow:hidden;border-radius:14px;background:#111;cursor:zoom-in;border:0;padding:0}
+.tile.wide{grid-column:span 2}
+.tile.tall{grid-row:span 2}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.tile:hover img{transform:scale(1.07)}
+.tile::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.18);opacity:0;transition:opacity .3s}
+.tile:hover::after{opacity:1}
+.tile:focus-visible{outline:2px solid #f2f0eb;outline-offset:3px}
+
+/* ---- кнопка ---- */
+.cta{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:55}
+.cta a{position:relative;display:inline-block;background:rgba(0,0,0,.35);-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%);border:1px solid rgba(255,255,255,.28);color:#eee;text-decoration:none;text-transform:uppercase;font-weight:800;font-size:clamp(13px,1.1vw,18px);letter-spacing:.02em;padding:14px 40px;border-radius:999px;box-shadow:inset 0 1px 1px rgba(255,255,255,.35),0 10px 26px rgba(0,0,0,.35);transition:transform .25s,background .25s}
+.cta a:hover{transform:translateY(-3px);background:rgba(0,0,0,.55)}
+
+/* ---- повноекранний перегляд ---- */
+.lb{position:fixed;inset:0;z-index:2000;background:rgba(6,6,7,.97);display:none;place-items:center;touch-action:pan-y}
+.lb.on{display:grid;animation:fade .25s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.lb img{max-width:92vw;max-height:88vh;object-fit:contain;box-shadow:0 40px 120px rgba(0,0,0,.8);user-select:none;-webkit-user-drag:none}
+.lb .x{position:fixed;top:20px;right:20px;border:1px solid #444;color:#f2f0eb;background:rgba(20,20,22,.6);padding:10px 16px;border-radius:30px;font:inherit;font-size:13px;cursor:pointer;z-index:2010}
+.lb .x:hover{background:#f2f0eb;color:#0d0d0e}
+.lb .nav{position:fixed;top:50%;transform:translateY(-50%);width:54px;height:54px;border-radius:50%;border:1px solid #444;background:rgba(20,20,22,.6);color:#f2f0eb;font-size:26px;cursor:pointer;z-index:2010;display:grid;place-items:center;transition:background .2s}
+.lb .nav:hover{background:#f2f0eb;color:#0d0d0e}
+.lb .prev{left:20px}.lb .next{right:20px}
+.lb .count{position:fixed;bottom:22px;left:0;right:0;text-align:center;color:#8a8886;font-size:12px;letter-spacing:.2em;z-index:2010}
+body.lb-open{overflow:hidden}
+
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  .htitle{padding:110px 16px 28px}
+  .htitle .facts{gap:1.2em}
+  .intro{grid-template-columns:1fr;margin-bottom:32px}
+  .intro__photo{aspect-ratio:4/3}
+  .hall-card{padding:22px 20px 26px;gap:14px}
+  .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:clamp(140px,38vw,220px);gap:8px;padding-bottom:100px}
+  .tile.wide{grid-column:span 2}
+  .tile.tall{grid-row:span 2}
+  .cta{bottom:18px}
+  .cta a{padding:13px 30px}
+  .lb .nav{width:42px;height:42px;font-size:20px}
+  .lb .prev{left:8px}.lb .next{right:8px}
+  .lb .x{top:12px;right:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="htitle">
+    <h1>ГРИМЕРНА</h1>
+    <div class="facts"><span>2 РОБОЧІ МІСЦЯ</span><span>ДЗЕРКАЛА З ПІДСВІТКОЮ</span></div>
+    <div class="desc">Твоя зона краси та підготовки —<br/>з витяжкою, зручними столиками та доступом до води</div>
+  </div>
+
+  <!-- опис залу (той самий, що на головній) поруч із фото -->
+  <section class="intro">
+    <button class="intro__photo tile" data-idx="0" aria-label="Відкрити фото на весь екран"><img src="img/makeup_01_s.jpg" alt="ГРИМЕРНА"></button>
+    <div class="hall-card" id="hallCard"></div>
+  </section>
+
+  <!-- плитки -->
+  <section class="gallery" id="gallery">
+    <button class="tile wide" data-idx="1" aria-label="Фото 2"><img src="img/makeup_03_s.jpg" alt="Гримерна 2" loading="lazy"></button>
+    <button class="tile tall" data-idx="2" aria-label="Фото 3"><img src="img/makeup_02_s.jpg" alt="Гримерна 3" loading="lazy"></button>
+    <button class="tile wide" data-idx="3" aria-label="Фото 4"><img src="img/makeup_04_s.jpg" alt="Гримерна 4" loading="lazy"></button>
+    <button class="tile wide" data-idx="4" aria-label="Фото 5"><img src="img/makeup_05_s.jpg" alt="Гримерна 5" loading="lazy"></button>
+  </section>
+</div>
+
+<div class="cta"><a href="../index.html#booking?hall=grymerna">Забронювати</a></div>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Перегляд фото">
+  <button class="x" id="lbClose">Закрити &times;</button>
+  <button class="nav prev" id="lbPrev" aria-label="Попереднє">&lsaquo;</button>
+  <img id="lbImg" src="" alt="">
+  <button class="nav next" id="lbNext" aria-label="Наступне">&rsaquo;</button>
+  <div class="count" id="lbCount"></div>
+</div>
+
+<script src="../js/halls-data.js"></script>
+<script src="../js/hall-card.js"></script>
+<script>
+document.getElementById('hallCard').innerHTML = renderHallCard('grymerna', { link: false }) +
+  '<a class="book" href="../index.html#booking?hall=grymerna">Забронювати</a>';
+
+const ORDER = ["makeup_01", "makeup_03", "makeup_02", "makeup_04", "makeup_05"];
+const lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg'), lbCount = document.getElementById('lbCount');
+let cur = 0;
+function show(i) { cur = (i + ORDER.length) % ORDER.length; lbImg.src = 'img/' + ORDER[cur] + '.jpg'; lbCount.textContent = (cur + 1) + ' / ' + ORDER.length; }
+function openLB(i) { show(i); lb.classList.add('on'); document.body.classList.add('lb-open'); document.getElementById('lbClose').focus(); }
+function closeLB() { lb.classList.remove('on'); document.body.classList.remove('lb-open'); }
+document.querySelectorAll('[data-idx]').forEach((t) => t.addEventListener('click', () => openLB(+t.dataset.idx)));
+document.getElementById('lbClose').addEventListener('click', closeLB);
+document.getElementById('lbPrev').addEventListener('click', () => show(cur - 1));
+document.getElementById('lbNext').addEventListener('click', () => show(cur + 1));
+lb.addEventListener('click', (e) => { if (e.target === lb) closeLB(); });
+document.addEventListener('keydown', (e) => {
+  if (!lb.classList.contains('on')) return;
+  if (e.key === 'Escape') closeLB(); if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1);
+});
+// свайп на телефоні
+let tx = null;
+lb.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+lb.addEventListener('touchend', (e) => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) show(cur + (dx < 0 ? 1 : -1)); tx = null; });
+</script>
+<script src="../js/prophoto-nav.js" data-site="studio" data-page="makeup" data-mode="fixed"></script>
+</body>
+</html>
