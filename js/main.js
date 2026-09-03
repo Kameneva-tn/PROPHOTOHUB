@@ -98,64 +98,13 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
 })();
 
 /* =========================================================
-   4. ЗАЛИ — клік по фото відкриває інформацію про зал
+   4. ЗАЛИ — опис залу розгортається при наведенні (js/hall-card.js),
+   клік по назві чи фото веде на сторінку залу
    ========================================================= */
-(function hallInfoToggle() {
-  const buttons = document.querySelectorAll('.hall-col');
-  const panel = document.getElementById('hallInfo');
-  const content = document.getElementById('hallInfoContent');
-  const closeBtn = document.getElementById('hallInfoClose');
-  if (!buttons.length || !panel) return;
-
-  let activeHall = null;
-
-  function render(hallKey) {
-    const h = HALLS[hallKey];
-    if (!h) return;
-    const nightPct = Math.round((NIGHT_MULTIPLIER - 1) * 100); // з rate — щоб не дублювати "50%" текстом окремо від логіки
-    const priceHtml = h.rate != null
-      ? `<p class="hall-info__price-amount">Оренда: ${h.rate} грн/год</p>
-         <p class="hall-info__price-note">в нічний час +${nightPct}% до вартості</p>`
-      : `<p class="hall-info__price-amount">Ціна уточнюється</p>`;
-
-    content.innerHTML = `
-      <div class="hall-info__row">
-        <div class="hall-info__dim"><span>${h.dim.label}</span>${h.dim.value}</div>
-        ${h.area ? `<div class="hall-info__dim"><span>${h.area.label}</span>${h.area.value}</div>` : ''}
-      </div>
-      <ul class="hall-info__features">
-        ${h.features.map((f) => `<li>${f}</li>`).join('')}
-      </ul>
-      ${h.note ? `<p class="hall-info__note">${h.note}</p>` : ''}
-      ${h.extra ? `<p class="hall-info__note">${h.extra}</p>` : ''}
-      <div class="hall-info__price">${priceHtml}</div>
-      ${h.page ? `<a class="hall-info__more" href="${h.page}">Дивитись залу &rarr;</a>` : ''}
-    `;
-  }
-
-  function openHall(hallKey, triggerBtn) {
-    buttons.forEach((b) => b.setAttribute('aria-expanded', b === triggerBtn ? 'true' : 'false'));
-    render(hallKey);
-    panel.hidden = false;
-    activeHall = hallKey;
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function closePanel() {
-    buttons.forEach((b) => b.setAttribute('aria-expanded', 'false'));
-    panel.hidden = true;
-    activeHall = null;
-  }
-
-  buttons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const hallKey = btn.dataset.hall;
-      if (activeHall === hallKey) { closePanel(); return; }
-      openHall(hallKey, btn);
-    });
+(function hallCards() {
+  document.querySelectorAll('[data-hall-card]').forEach((el) => {
+    el.innerHTML = renderHallCard(el.dataset.hallCard);
   });
-
-  closeBtn.addEventListener('click', closePanel);
 })();
 
 /* =========================================================
@@ -181,7 +130,10 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
   // 14 днів на десктопі, 7 — на телефоні (щоб сітка вміщалася в екран)
   const mobileGrid = window.matchMedia('(max-width: 600px)');
   const daysVisible = () => (mobileGrid.matches ? 7 : 14);
-  const HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
+  // Денні та вечірні години показуються завжди; нічні (23:00–08:00) — за перемикачем.
+  const DAY_HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00'];
+  const NIGHT_HOURS = ['23:00','00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00'];
+  let showNight = false;
   const WEEKDAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
 
   const pad = (n) => String(n).padStart(2, '0');
@@ -203,9 +155,7 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
   function priceFor(hallKey, hour) {
     const hall = HALLS[hallKey];
     if (!hall || hall.rate == null) return null; // ціну ще не задано (напр. гримерна)
-    const h = parseInt(hour, 10);
-    const isNight = h < 10 || h >= 20;
-    return isNight ? Math.round(hall.rate * NIGHT_MULTIPLIER) : hall.rate;
+    return Math.round(hall.rate * rateMultiplier(hour));
   }
 
   function buildDateList() {
@@ -250,6 +200,13 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
   gridPrev.addEventListener('click', () => { state.windowStart.setDate(state.windowStart.getDate() - daysVisible()); loadAvailability(); });
   gridNext.addEventListener('click', () => { state.windowStart.setDate(state.windowStart.getDate() + daysVisible()); loadAvailability(); });
   gridToday.addEventListener('click', () => { state.windowStart = startOfDay(new Date()); loadAvailability(); });
+  const nightToggle = document.getElementById('gridNight');
+  if (nightToggle) nightToggle.addEventListener('click', () => {
+    showNight = !showNight;
+    nightToggle.classList.toggle('is-on', showNight);
+    nightToggle.setAttribute('aria-pressed', String(showNight));
+    renderGrid(buildDateList());
+  });
   // повернули телефон / змінили ширину — перебудувати сітку під 7 або 14 днів
   let lastDays = daysVisible();
   window.addEventListener('resize', () => {
@@ -290,10 +247,13 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
     thead += '</tr>';
 
     let tbody = '';
-    HOURS.forEach((hour) => {
+    const hours = showNight ? DAY_HOURS.concat(NIGHT_HOURS) : DAY_HOURS;
+    hours.forEach((hour) => {
       const hh = parseInt(hour, 10);
       const endLabel = pad((hh + 1) % 24);
-      tbody += `<tr><th class="hour-grid__hourlabel">${pad(hh)}-${endLabel}</th>`;
+      const isNightRow = rateMultiplier(hh) === NIGHT_MULTIPLIER;
+      if (hour === '23:00') tbody += `<tr class="hour-grid__sep"><th colspan="${dates.length + 1}">Нічний час · +${Math.round((NIGHT_MULTIPLIER - 1) * 100)}% · години 00:00–08:00 — ранок обраної дати</th></tr>`;
+      tbody += `<tr${isNightRow ? ' class="hour-grid__night"' : ''}><th class="hour-grid__hourlabel">${pad(hh)}-${endLabel}</th>`;
       dates.forEach((d) => {
         const iso = isoDate(d);
         const cellTime = new Date(d);

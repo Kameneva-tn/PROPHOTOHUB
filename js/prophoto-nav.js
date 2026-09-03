@@ -75,6 +75,7 @@
 .pp-nav__burger.open i span:nth-child(1){top:7.5px;transform:rotate(45deg)}\
 .pp-nav__burger.open i span:nth-child(2){opacity:0;transform:scaleX(0)}\
 .pp-nav__burger.open i span:nth-child(3){top:7.5px;transform:rotate(-45deg)}\
+.pp-nav--fixed .pp-nav__line{display:none}\
 .pp-nav__line{height:1px;background:rgba(255,255,255,.35);max-width:1360px;margin:0 40px}\
 @media (min-width:1441px){.pp-nav__line{margin:0 auto}}\
 .pp-menu{position:fixed;inset:0;z-index:920;background:rgba(12,11,10,.97);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;visibility:hidden;transition:opacity .4s ease,visibility .4s;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Inter,Arial,sans-serif;padding:80px 40px 40px;overflow:auto}\

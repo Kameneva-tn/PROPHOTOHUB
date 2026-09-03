@@ -33,7 +33,17 @@ const HALLS = {
   }
 };
 
-// Нічна надбавка застосовується до rate згідно з блоком "Режим роботи"
-// на сторінці контактів: денний час 10:00–20:00 за базовою ставкою,
-// нічний час 6:00–10:00 та 20:00–23:00 — rate * NIGHT_MULTIPLIER.
-const NIGHT_MULTIPLIER = 1.5;
+// Тарифи за часом доби (блок "Режим роботи" на сторінці контактів):
+//   денний час   10:00–20:00 — базова ставка rate
+//   ранок/вечір  08:00–10:00 та 20:00–23:00 — rate × 1.5  (+50%)
+//   нічний час   23:00–08:00 — rate × 2    (+100%)
+const EVENING_MULTIPLIER = 1.5;
+const NIGHT_MULTIPLIER = 2;
+
+// Множник для години (0–23)
+function rateMultiplier(hour) {
+  const h = typeof hour === 'string' ? parseInt(hour, 10) : hour;
+  if (h >= 10 && h < 20) return 1;
+  if ((h >= 8 && h < 10) || (h >= 20 && h < 23)) return EVENING_MULTIPLIER;
+  return NIGHT_MULTIPLIER;
+}
