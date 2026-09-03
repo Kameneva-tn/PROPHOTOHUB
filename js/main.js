@@ -21,7 +21,15 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
   const texts = document.querySelectorAll('.section-title, .watermark');
   if (!photos.length) return;
 
+  // На телефонах і планшетах паралакс вимкнено: на тач-скролі він смикає фото,
+  // а CSS для мобільного і так фіксує transform: none.
+  const mobile = window.matchMedia('(max-width: 900px), (pointer: coarse)');
+  if (mobile.matches) return;
+  document.body.classList.add('has-parallax');
+
+  let ticking = false;
   function update() {
+    ticking = false;
     const vh = window.innerHeight;
     photos.forEach((el) => {
       const speed = parseFloat(el.dataset.parallax) || 0.1;
@@ -35,9 +43,12 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
       el.style.transform = `translateY(${(-centerOffset * 0.04).toFixed(1)}px)`;
     });
   }
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); } // один перерахунок на кадр
+  }
 
-  window.addEventListener('scroll', update, { passive: true });
-  window.addEventListener('resize', update);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
   update();
 })();
 
@@ -167,7 +178,9 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
   const status = document.getElementById('bookingStatus');
   if (!gridTable || !form) return;
 
-  const DAYS_VISIBLE = 14;
+  // 14 днів на десктопі, 7 — на телефоні (щоб сітка вміщалася в екран)
+  const mobileGrid = window.matchMedia('(max-width: 600px)');
+  const daysVisible = () => (mobileGrid.matches ? 7 : 14);
   const HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
   const WEEKDAYS_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
 
@@ -197,7 +210,7 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
 
   function buildDateList() {
     const dates = [];
-    for (let i = 0; i < DAYS_VISIBLE; i++) {
+    for (let i = 0; i < daysVisible(); i++) {
       const d = new Date(state.windowStart);
       d.setDate(d.getDate() + i);
       dates.push(d);
@@ -234,9 +247,15 @@ const API_BASE = window.STUDIO_API_BASE || '/api';
     });
   });
 
-  gridPrev.addEventListener('click', () => { state.windowStart.setDate(state.windowStart.getDate() - DAYS_VISIBLE); loadAvailability(); });
-  gridNext.addEventListener('click', () => { state.windowStart.setDate(state.windowStart.getDate() + DAYS_VISIBLE); loadAvailability(); });
+  gridPrev.addEventListener('click', () => { state.windowStart.setDate(state.windowStart.getDate() - daysVisible()); loadAvailability(); });
+  gridNext.addEventListener('click', () => { state.windowStart.setDate(state.windowStart.getDate() + daysVisible()); loadAvailability(); });
   gridToday.addEventListener('click', () => { state.windowStart = startOfDay(new Date()); loadAvailability(); });
+  // повернули телефон / змінили ширину — перебудувати сітку під 7 або 14 днів
+  let lastDays = daysVisible();
+  window.addEventListener('resize', () => {
+    const d = daysVisible();
+    if (d !== lastDays) { lastDays = d; loadAvailability(); }
+  });
 
   async function loadAvailability() {
     const dates = buildDateList();

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Керування бронюваннями — PRO PHOTO studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#141312;--panel:#1f1d1c;--panel2:#292725;--ink:#f2f0eb;--dim:#8f8c88;--line:#34312e;--ok:#3dbb6d;--bad:#e5473f;--warn:#e9b84a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.4;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0 16px;border-bottom:1px solid var(--line);margin-bottom:20px}
+header h1{font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+header h1 span{color:var(--dim);font-weight:500;letter-spacing:0;text-transform:none;display:block;font-size:12px;margin-top:2px}
+.pill{border:1px solid var(--ink);border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;white-space:nowrap;transition:background .15s,color .15s}
+.pill:hover,.pill.on{background:var(--ink);color:var(--bg)}
+.pill.ghost{border-color:var(--line);color:var(--dim)}
+.pill.ghost:hover{border-color:var(--ink);color:var(--ink);background:none}
+.btn{background:var(--ink);color:var(--bg);border-radius:999px;padding:11px 20px;font-weight:700;font-size:14px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.danger{background:var(--bad);color:#fff}
+.btn.sm{padding:7px 12px;font-size:12px}
+
+/* login */
+.login{max-width:380px;margin:80px auto;background:var(--panel);border-radius:20px;padding:28px}
+.login h2{font-size:18px;font-weight:800;margin-bottom:6px}
+.login p{color:var(--dim);font-size:13px;margin-bottom:18px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim)}
+.field input,.field select,.field textarea{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;outline:0;font-size:16px;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink)}
+.field select option{color:#000}
+.err{color:var(--bad);font-size:13px;min-height:1.2em}
+
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:18px}
+.toolbar .sep{flex:1}
+.range{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.range input[type=date]{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:13px;color-scheme:dark}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);cursor:pointer}
+.chk input{accent-color:var(--ink);width:16px;height:16px}
+
+/* list */
+.stat{display:flex;gap:18px;color:var(--dim);font-size:13px;margin-bottom:14px;flex-wrap:wrap}
+.stat b{color:var(--ink)}
+.day{margin-bottom:22px}
+.day h3{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:8px;display:flex;justify-content:space-between}
+.day h3 .today{color:var(--ok)}
+.card{background:var(--panel);border-radius:16px;padding:14px 16px;margin-bottom:8px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.card.cancelled{opacity:.5}
+.card .hall{display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--line);border-radius:999px;padding:4px 9px;margin-bottom:8px;color:var(--dim)}
+.card .hall.tsyklorama{border-color:#6ea8ff;color:#6ea8ff}.card .hall.podcast{border-color:#ffb86e;color:#ffb86e}.card .hall.grymerna{border-color:#c98cff;color:#c98cff}
+.card .who{font-weight:700;font-size:15px}
+.card .who a{color:var(--dim);font-weight:500;text-decoration:none;margin-left:8px}
+.card .who a:hover{color:var(--ink);text-decoration:underline}
+.card .note{color:var(--warn);font-size:13px;margin-top:2px}
+.card .meta{color:var(--dim);font-size:12px;margin-top:6px}
+.hours{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.hour{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border-radius:999px;padding:5px 6px 5px 12px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+.hour.cancelled{text-decoration:line-through;opacity:.6}
+.hour button{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:14px;line-height:1;color:var(--dim)}
+.hour button:hover{background:var(--bad);color:#fff}
+.card .actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.empty{background:var(--panel);border-radius:16px;padding:40px;text-align:center;color:var(--dim)}
+.loading{color:var(--dim);font-size:13px;padding:20px 0}
+
+/* block form */
+.block{background:var(--panel);border-radius:20px;padding:20px;margin-top:30px}
+.block h2{font-size:15px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.block p{color:var(--dim);font-size:13px;margin-bottom:16px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hourpick{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:14px}
+.hourpick label{display:block}
+.hourpick input{position:absolute;opacity:0;width:0;height:0}
+.hourpick span{display:block;text-align:center;border:1px solid var(--line);border-radius:10px;padding:9px 0;font-size:12px;font-weight:600;cursor:pointer;background:var(--panel2)}
+.hourpick input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.hourpick input:disabled+span{opacity:.3;cursor:not-allowed;text-decoration:line-through}
+.msg{font-size:13px;min-height:1.2em;margin-top:8px}
+.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;max-width:90vw}
+.toast.show{opacity:1}
+
+@media (max-width:640px){
+  .wrap{padding:0 14px 60px}
+  .card{grid-template-columns:1fr}
+  .card .actions{flex-direction:row;align-items:center}
+  .row2{grid-template-columns:1fr}
+  .hourpick{grid-template-columns:repeat(4,1fr)}
+  header h1{font-size:14px}
+}
+</style>
+</head>
+<body>
+<script>window.STUDIO_API_BASE = 'https://prophoto-api.onrender.com/api';</script>
+
+<div class="wrap">
+  <header>
+    <h1>Керування бронюваннями <span>PRO PHOTO studio</span></h1>
+    <button class="pill ghost" id="logout" hidden>Вийти</button>
+  </header>
+
+  <!-- ВХІД -->
+  <section class="login" id="login">
+    <h2>Вхід</h2>
+    <p>Введіть пароль адмінки (ADMIN_TOKEN з налаштувань сервера).</p>
+    <div class="field"><label for="tok">Пароль</label><input id="tok" type="password" autocomplete="current-password"></div>
+    <label class="chk" style="margin-bottom:16px"><input type="checkbox" id="remember" checked> Запам'ятати на цьому пристрої</label>
+    <div class="err" id="loginErr"></div>
+    <button class="btn" id="loginBtn" style="width:100%;margin-top:6px">Увійти</button>
+  </section>
+
+  <!-- ПАНЕЛЬ -->
+  <section id="panel" hidden>
+    <div class="toolbar">
+      <div class="tabs" id="hallTabs">
+        <button class="pill on" data-hall="">Усі зали</button>
+        <button class="pill" data-hall="tsyklorama">Циклорама</button>
+        <button class="pill" data-hall="podcast">Подкаст зала</button>
+        <button class="pill" data-hall="grymerna">Гримерна</button>
+      </div>
+      <span class="sep"></span>
+      <div class="tabs" id="periodTabs">
+        <button class="pill ghost" data-days="1">Сьогодні</button>
+        <button class="pill ghost on" data-days="7">7 днів</button>
+        <button class="pill ghost" data-days="30">30 днів</button>
+      </div>
+      <div class="range"><input type="date" id="from"> — <input type="date" id="to"></div>
+      <label class="chk"><input type="checkbox" id="showCancelled"> скасовані</label>
+      <button class="pill ghost" id="refresh" title="Оновити">↻</button>
+    </div>
+
+    <div class="stat" id="stat"></div>
+    <div id="list"><div class="loading">Завантаження…</div></div>
+
+    <div class="block">
+      <h2>Зайняти години вручну</h2>
+      <p>Техперерва, власна зйомка або бронь, прийнята по телефону — години зникнуть із сітки на сайті.</p>
+      <div class="row2">
+        <div class="field"><label for="bHall">Зал</label>
+          <select id="bHall"><option value="tsyklorama">Циклорама</option><option value="podcast">Подкаст зала</option><option value="grymerna">Гримерна</option></select></div>
+        <div class="field"><label for="bDate">Дата</label><input type="date" id="bDate"></div>
+      </div>
+      <div class="field"><label>Години</label><div class="hourpick" id="hourPick"></div></div>
+      <div class="row2">
+        <div class="field"><label for="bName">Хто (необов'язково)</label><input id="bName" placeholder="Ім'я клієнта або «техперерва»"></div>
+        <div class="field"><label for="bPhone">Телефон (необов'язково)</label><input id="bPhone" type="tel" placeholder="+380"></div>
+      </div>
+      <div class="field"><label for="bNote">Примітка</label><input id="bNote" placeholder="Коментар для себе"></div>
+      <button class="btn" id="blockBtn">Зайняти обрані години</button>
+      <div class="msg" id="blockMsg"></div>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API = window.STUDIO_API_BASE || '/api';
+const HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00'];
+const HALLS = { tsyklorama:'Циклорама', podcast:'Подкаст зала', grymerna:'Гримерна' };
+const WD = ['неділя','понеділок','вівторок','середа','четвер','п\u2019ятниця','субота'];
+const pad = n => String(n).padStart(2,'0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const $ = id => document.getElementById(id);
+
+let token = sessionStorage.getItem('pp_admin') || localStorage.getItem('pp_admin') || '';
+const state = { hall:'', from: iso(new Date()), to: iso(new Date(Date.now()+6*864e5)), cancelled:false, rows:[] };
+
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2600); }
+async function api(path, opts={}){
+  const res = await fetch(API+path, { ...opts, headers: { 'Content-Type':'application/json', 'X-Admin-Token': token, ...(opts.headers||{}) } });
+  if (res.status===401) { logout(); throw new Error('Невірний пароль'); }
+  const data = await res.json().catch(()=>({}));
+  if (!res.ok) throw new Error(data.error || ('Помилка '+res.status));
+  return data;
+}
+
+/* ---------- вхід ---------- */
+async function login(){
+  $('loginErr').textContent='';
+  const t=$('tok').value.trim(); if(!t) return;
+  token=t; $('loginBtn').disabled=true; $('loginBtn').textContent='Перевіряю… (сервер може прокидатись до 30 с)';
+  try {
+    await api('/admin/ping');
+    ($('remember').checked ? localStorage : sessionStorage).setItem('pp_admin', token);
+    showPanel();
+  } catch(e){ token=''; $('loginErr').textContent = e.message==='Невірний пароль' ? 'Невірний пароль' : 'Сервер не відповідає: '+e.message; }
+  $('loginBtn').disabled=false; $('loginBtn').textContent='Увійти';
+}
+function logout(){ token=''; localStorage.removeItem('pp_admin'); sessionStorage.removeItem('pp_admin'); $('panel').hidden=true; $('logout').hidden=true; $('login').hidden=false; }
+function showPanel(){ $('login').hidden=true; $('panel').hidden=false; $('logout').hidden=false; $('from').value=state.from; $('to').value=state.to; $('bDate').value=iso(new Date()); load(); }
+$('loginBtn').addEventListener('click', login);
+$('tok').addEventListener('keydown', e=>{ if(e.key==='Enter') login(); });
+$('logout').addEventListener('click', logout);
+
+/* ---------- список ---------- */
+async function load(){
+  $('list').innerHTML='<div class="loading">Завантаження…</div>';
+  try {
+    const q=new URLSearchParams({ from:state.from, to:state.to, status: state.cancelled?'all':'active' });
+    if(state.hall) q.set('hall',state.hall);
+    state.rows = await api('/admin/bookings?'+q);
+    render();
+  } catch(e){ $('list').innerHTML=`<div class="empty">Не вдалося завантажити: ${e.message}</div>`; }
+}
+function render(){
+  const rows=state.rows, todayIso=iso(new Date());
+  const active=rows.filter(r=>r.status==='active');
+  $('stat').innerHTML=`<span>Активних годин: <b>${active.length}</b></span><span>Клієнтів: <b>${new Set(active.map(r=>r.date+r.hall+r.name+r.phone)).size}</b></span>${state.cancelled?`<span>Скасованих: <b>${rows.length-active.length}</b></span>`:''}`;
+  if(!rows.length){ $('list').innerHTML='<div class="empty">За цей період бронювань немає</div>'; return; }
+  // групуємо: дата → (зал+клієнт) → години
+  const byDate={};
+  rows.forEach(r=>{ const k=r.date; (byDate[k]=byDate[k]||{}); const g=`${r.hall}|${r.name}|${r.phone}`; (byDate[k][g]=byDate[k][g]||[]).push(r); });
+  $('list').innerHTML=Object.keys(byDate).sort().map(date=>{
+    const d=new Date(date+'T00:00:00');
+    const groups=Object.values(byDate[date]).map(items=>{
+      items.sort((a,b)=>a.hour.localeCompare(b.hour));
+      const f=items[0], allCancelled=items.every(i=>i.status!=='active'), act=items.filter(i=>i.status==='active');
+      const hours=items.map(i=>`<span class="hour ${i.status!=='active'?'cancelled':''}" title="${i.status!=='active'?'скасовано'+(i.cancelReason?': '+i.cancelReason:''):''}">${i.hour}–${pad((parseInt(i.hour)+1)%24)}:00${i.status==='active'?`<button data-cancel="${i.id}" aria-label="Скасувати ${i.hour}">×</button>`:''}</span>`).join('');
+      return `<div class="card ${allCancelled?'cancelled':''}">
+        <div>
+          <span class="hall ${f.hall}">${HALLS[f.hall]||f.hall}</span>
+          <div class="who">${esc(f.name||'—')}${f.phone?`<a href="tel:${esc(f.phone)}">${esc(f.phone)}</a>`:''}</div>
+          ${f.note?`<div class="note">${esc(f.note)}</div>`:''}
+          <div class="hours">${hours}</div>
+          <div class="meta">створено ${fmtDT(f.createdAt)}${allCancelled?' · скасовано':''}</div>
+        </div>
+        <div class="actions">${act.length>1?`<button class="btn sm danger" data-cancel-all="${act.map(i=>i.id).join(',')}">Скасувати всі ${act.length} год.</button>`:''}</div>
+      </div>`;
+    }).join('');
+    return `<div class="day"><h3><span>${pad(d.getDate())}.${pad(d.getMonth()+1)} · ${WD[d.getDay()]}</span>${date===todayIso?'<span class="today">сьогодні</span>':''}</h3>${groups}</div>`;
+  }).join('');
+}
+function esc(s){ return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function fmtDT(s){ if(!s) return '—'; const d=new Date(s); return `${pad(d.getDate())}.${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+
+$('list').addEventListener('click', async e=>{
+  const one=e.target.closest('[data-cancel]'), all=e.target.closest('[data-cancel-all]');
+  if(!one && !all) return;
+  const ids = one ? [one.dataset.cancel] : all.dataset.cancelAll.split(',');
+  const reason = prompt(`Скасувати ${ids.length===1?'цю годину':ids.length+' годин'}? Причина (необов'язково):`);
+  if(reason===null) return;
+  try {
+    for(const id of ids) await api('/admin/bookings/'+encodeURIComponent(id), { method:'DELETE', body: JSON.stringify({ reason }) });
+    toast(ids.length===1?'Годину звільнено':`Звільнено ${ids.length} годин`);
+    load();
+  } catch(err){ toast('Помилка: '+err.message); }
+});
+
+/* ---------- фільтри ---------- */
+$('hallTabs').addEventListener('click', e=>{ const b=e.target.closest('[data-hall]'); if(!b) return; state.hall=b.dataset.hall; [...$('hallTabs').children].forEach(x=>x.classList.toggle('on',x===b)); load(); });
+$('periodTabs').addEventListener('click', e=>{ const b=e.target.closest('[data-days]'); if(!b) return; const n=+b.dataset.days; state.from=iso(new Date()); state.to=iso(new Date(Date.now()+(n-1)*864e5)); $('from').value=state.from; $('to').value=state.to; [...$('periodTabs').children].forEach(x=>x.classList.toggle('on',x===b)); load(); });
+$('from').addEventListener('change', e=>{ state.from=e.target.value; [...$('periodTabs').children].forEach(x=>x.classList.remove('on')); load(); });
+$('to').addEventListener('change', e=>{ state.to=e.target.value; [...$('periodTabs').children].forEach(x=>x.classList.remove('on')); load(); });
+$('showCancelled').addEventListener('change', e=>{ state.cancelled=e.target.checked; load(); });
+$('refresh').addEventListener('click', load);
+
+/* ---------- ручне блокування ---------- */
+$('hourPick').innerHTML=HOURS.map(h=>`<label><input type="checkbox" value="${h}"><span>${h}</span></label>`).join('');
+async function refreshBusyHours(){
+  const hall=$('bHall').value, date=$('bDate').value; if(!date) return;
+  try {
+    const av=await fetch(`${API}/availability?hall=${hall}&month=${date.slice(0,7)}`).then(r=>r.json());
+    const busy=av[date]||[];
+    $('hourPick').querySelectorAll('input').forEach(i=>{ i.disabled=busy.includes(i.value); if(i.disabled) i.checked=false; });
+  } catch{}
+}
+$('bHall').addEventListener('change', refreshBusyHours); $('bDate').addEventListener('change', refreshBusyHours);
+$('blockBtn').addEventListener('click', async ()=>{
+  const hall=$('bHall').value, date=$('bDate').value, hours=[...$('hourPick').querySelectorAll('input:checked')].map(i=>i.value);
+  const m=$('blockMsg'); m.className='msg';
+  if(!date||!hours.length){ m.className='msg bad'; m.textContent='Оберіть дату і хоча б одну годину'; return; }
+  try {
+    await api('/admin/bookings', { method:'POST', body: JSON.stringify({ hall, slots: hours.map(h=>({date,hour:h})), name:$('bName').value.trim(), phone:$('bPhone').value.trim(), note:$('bNote').value.trim() }) });
+    m.className='msg ok'; m.textContent=`Зайнято ${hours.length} год. — ${HALLS[hall]}, ${date}`;
+    $('hourPick').querySelectorAll('input').forEach(i=>i.checked=false); $('bNote').value='';
+    refreshBusyHours(); load();
+  } catch(e){ m.className='msg bad'; m.textContent='Помилка: '+e.message; }
+});
+
+/* ---------- старт ---------- */
+if(token){ api('/admin/ping').then(showPanel).catch(()=>logout()); }
+$('bDate').value=iso(new Date()); setTimeout(refreshBusyHours, 500);
+</script>
+</body>
+</html>

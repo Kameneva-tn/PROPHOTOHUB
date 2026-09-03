@@ -155,11 +155,21 @@ a { color: inherit; text-decoration: none; }
   inset: 0;
   overflow: hidden;
 }
+.hero__bg picture { display: block; width: 100%; height: 100%; }
+/* затемнення знизу — щоб білий логотип і кнопка читались над світлою циклорамою */
+.hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,0,0,.45) 0%, rgba(0,0,0,.05) 30%, rgba(0,0,0,.15) 55%, rgba(0,0,0,.72) 100%);
+}
 .hero__bg-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform-origin: 62% 55%; /* тримаємо фокус на персонажі кадру */
+  object-position: 62% 55%; /* фокус на циклорамі */
+  transform-origin: 62% 55%;
   animation: heroBgZoom 30s ease-in-out infinite;
 }
 @keyframes heroBgZoom {
@@ -260,8 +270,14 @@ a { color: inherit; text-decoration: none; }
   justify-content: center;
   box-shadow: 0 6px 24px rgba(0,0,0,.35);
   transition: transform .2s ease;
+  padding: 0;                 /* Safari додає власні відступи кнопці — без цього коло стає овалом */
+  box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
 }
-.call-fab img { width: 60%; height: 60%; }
+.call-fab img { width: 60%; height: 60%; display: block; }
 .call-fab:hover { transform: scale(1.06); }
 
 /* ==========================================================
@@ -308,6 +324,9 @@ a { color: inherit; text-decoration: none; }
   transition: transform .5s ease;
   will-change: transform;
 }
+/* поки працює паралакс (JS ставить клас на body) — transform міняється на кожен скрол,
+   і анімація переходу лише змушує фото "доганяти" позицію = смикання */
+body.has-parallax .hall-col__photo { transition: none; }
 .hall-col:hover .hall-col__photo { transform: scale(1.05); }
 .hall-col[aria-expanded="true"] .hall-col__photo { transform: scale(1.05); }
 
@@ -751,8 +770,29 @@ a { color: inherit; text-decoration: none; }
 
   .hall-info__dim { flex-wrap: wrap; row-gap: 0; }
 
-  .booking__box { padding: 0 16px; }
+  .booking__box { padding: 0 16px; gap: 36px; }
   .modal__box { padding: 24px; }
+
+  /* Паралакс на тачах вимкнено — фото стоять рівно */
+  .hall-col__photo { transform: none !important; }
+  .section-title, .watermark { transform: none !important; }
+
+  /* Календар: 7 днів, уміщається в екран, гортання стрілками */
+  .hour-grid__head { display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 8px; }
+  .hour-grid__nav { width: 36px; height: 36px; font-size: 20px; }
+  .hour-grid__range { justify-content: center; text-align: center; font-size: 12px; gap: 4px; flex-direction: column; }
+  .hour-grid__today { font-size: 11px; }
+  .hour-grid__scroll { padding: 4px; border-radius: 14px; overflow-x: hidden; }
+  .hour-grid__table { min-width: 0; width: 100%; table-layout: fixed; }
+  .hour-grid__corner { width: 44px; }
+  .hour-grid__hourlabel { font-size: 10.5px; padding-right: 4px; letter-spacing: -.02em; }
+  .hour-grid__daynum { font-size: 13px; }
+  .hour-grid__wd { font-size: 9px; }
+  .hour-grid__table td { padding: 1.5px; }
+  .hour-cell { min-width: 0; padding: 9px 0; font-size: 10.5px; border-radius: 6px; letter-spacing: -.02em; }
+  .hour-cell__lock { font-size: 11px; }
+  .hour-grid__legend { font-size: 11px; gap: 8px 16px; }
+  .hall-tab { padding: 10px 16px; font-size: 13px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -774,3 +814,6 @@ a { color: inherit; text-decoration: none; }
   transition: opacity .2s;
 }
 .hall-info__more:hover { opacity: .7; }
+
+/* Якірні переходи (#booking, #contacts…) не ховаються під фіксованою шапкою */
+section[id], header[id], div[id] { scroll-margin-top: 96px; }

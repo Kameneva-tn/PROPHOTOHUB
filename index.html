@@ -13,18 +13,12 @@
   <div class="hero__scroller">
     <div class="hero__pin">
       <div class="hero__bg" id="heroBg">
-        <img src="public/assets/hero-bg.jpg" alt="Фотостудія" class="hero__bg-img" id="heroBgImg">
+        <picture>
+          <source media="(max-width: 700px)" srcset="public/assets/hero-bg-mobile.jpg">
+          <img src="public/assets/hero-bg.jpg" alt="Фотостудія" class="hero__bg-img" id="heroBgImg">
+        </picture>
       </div>
 
-      <nav class="nav">
-        <a href="#booking" class="nav__link">Бронювання</a>
-        <a href="halls/cyclorama.html" class="nav__link">Циклорама</a>
-        <a href="halls/content-studio.html" class="nav__link">Подкаст зала</a>
-        <a href="halls/makeup-room.html" class="nav__link">Гримерна</a>
-        <a href="#equipment" class="nav__link">Обладнання</a>
-        <a href="#contacts" class="nav__link">Контакти</a>
-      </nav>
-      <div class="nav__divider"></div>
 
       <div class="hero__cta">
         <div class="hero__portrait" id="heroPortrait">
@@ -313,5 +307,6 @@
 <script>window.STUDIO_API_BASE = 'https://prophoto-api.onrender.com/api';</script>
 <script src="js/halls-data.js"></script>
 <script src="js/main.js"></script>
+<script src="js/prophoto-nav.js" data-site="studio" data-mode="fixed"></script>
 </body>
 </html>
