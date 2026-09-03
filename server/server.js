@@ -13,8 +13,12 @@
  *  POST   /api/admin/bookings                -> вручну зайняти години { hall, slots, name?, note? }
  *  GET    /api/admin/ping                    -> перевірка токена
  *
- * Сховище: якщо задано DATABASE_URL — PostgreSQL (таблиця створюється сама),
+ * Сховище: якщо задано DATABASE_URL — PostgreSQL/Supabase (таблиці bookings і callbacks,
+ * структура як у чинній базі; відсутні колонки для скасування додаються самі),
  * інакше — файл bookings.json поруч із server.js.
+ *
+ * Змінні: TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, ADMIN_TOKEN, DATABASE_URL, ALLOWED_ORIGIN,
+ * BOOKING_STATUS_ACTIVE (яке значення status ставити новим бронюванням; за замовчуванням 'new').
  *
  * Скасовані бронювання не видаляються, а отримують status = 'cancelled':
  * у сітці зайнятості вони не показуються, але історія лишається.
@@ -27,7 +31,9 @@ const path = require('path');
 require('dotenv').config();
 
 const app = express();
-app.use(cors());
+// CORS: якщо задано ALLOWED_ORIGIN (через кому кілька), пускаємо лише їх; інакше — всіх
+const allowed = (process.env.ALLOWED_ORIGIN || '').split(',').map((x) => x.trim()).filter(Boolean);
+app.use(cors(allowed.length ? { origin: (origin, cb) => cb(null, !origin || allowed.includes(origin)) } : {}));
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
@@ -35,6 +41,10 @@ const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
 const DATABASE_URL = process.env.DATABASE_URL;
+
+// Значення status для активного бронювання — те саме, що вже використовується в базі
+const ACTIVE_STATUS = process.env.BOOKING_STATUS_ACTIVE || 'new';
+const isCancelled = (st) => st === 'cancelled' || st === 'canceled';
 
 const VALID_HALLS = ['tsyklorama', 'podcast', 'grymerna'];
 const HALL_TITLES = { tsyklorama: 'Циклорама', podcast: 'Подкаст зала', grymerna: 'Гримерна' };
@@ -74,6 +84,7 @@ function makeJsonStore() {
       return slots.filter((s) => rows.some((b) => b.hall === hall && b.date === s.date && b.hour === s.hour));
     },
     async insert(rows) { const db = read(); db.bookings.push(...rows); write(db); return rows; },
+    async saveCallback() {},
     async get(id) { return read().bookings.find((b) => b.id === id) || null; },
     async cancel(id, reason) {
       const db = read();
@@ -89,26 +100,31 @@ function makeJsonStore() {
 function makePgStore() {
   const { Pool } = require('pg');
   const pool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } });
+
+  // Таблиці вже існують у Supabase (bookings, callbacks). Тут лише додаємо
+  // колонки для скасування, якщо їх ще нема — наявні дані не чіпаються.
   const ready = pool.query(`
     CREATE TABLE IF NOT EXISTS bookings (
-      id           TEXT PRIMARY KEY,
-      hall         TEXT NOT NULL,
-      date         TEXT NOT NULL,
-      hour         TEXT NOT NULL,
-      name         TEXT,
-      phone        TEXT,
-      note         TEXT,
-      status       TEXT NOT NULL DEFAULT 'active',
-      created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-      cancelled_at TIMESTAMPTZ,
-      cancel_reason TEXT
+      id BIGSERIAL PRIMARY KEY, hall TEXT NOT NULL, date DATE NOT NULL, hour TEXT NOT NULL,
+      name TEXT, phone TEXT, status TEXT, gcal_event_id TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     );
+    CREATE TABLE IF NOT EXISTS callbacks (
+      id BIGSERIAL PRIMARY KEY, name TEXT, phone TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS note TEXT;
+    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMPTZ;
+    ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancel_reason TEXT;
     CREATE INDEX IF NOT EXISTS bookings_hall_date ON bookings (hall, date);
   `).catch((e) => console.error('[pg] init error', e));
+
+  // date у базі — тип DATE; віддаємо рядком YYYY-MM-DD, як очікує фронт
   const rowToObj = (r) => ({
-    id: r.id, hall: r.hall, date: r.date, hour: r.hour, name: r.name, phone: r.phone, note: r.note,
-    status: r.status, createdAt: r.created_at, cancelledAt: r.cancelled_at, cancelReason: r.cancel_reason
+    id: String(r.id), hall: r.hall, date: r.date_str, hour: r.hour, name: r.name, phone: r.phone, note: r.note,
+    status: isCancelled(r.status) ? 'cancelled' : 'active', rawStatus: r.status,
+    createdAt: r.created_at, cancelledAt: r.cancelled_at, cancelReason: r.cancel_reason
   });
+  const SELECT = `SELECT *, to_char(date, 'YYYY-MM-DD') AS date_str FROM bookings`;
+  const ACTIVE = `(status IS NULL OR status NOT IN ('cancelled','canceled'))`;
 
   return {
     kind: 'postgres',
@@ -117,44 +133,58 @@ function makePgStore() {
       await ready;
       const w = []; const p = [];
       if (hall) { p.push(hall); w.push(`hall = $${p.length}`); }
-      if (from) { p.push(from); w.push(`date >= $${p.length}`); }
-      if (to) { p.push(to); w.push(`date <= $${p.length}`); }
-      if (status !== 'all') { p.push(status || 'active'); w.push(`status = $${p.length}`); }
-      const r = await pool.query(`SELECT * FROM bookings ${w.length ? 'WHERE ' + w.join(' AND ') : ''}`, p);
+      if (from) { p.push(from); w.push(`date >= $${p.length}::date`); }
+      if (to) { p.push(to); w.push(`date <= $${p.length}::date`); }
+      if (status === 'cancelled') w.push(`NOT ${ACTIVE}`);
+      else if (status !== 'all') w.push(ACTIVE);
+      const r = await pool.query(`${SELECT} ${w.length ? 'WHERE ' + w.join(' AND ') : ''}`, p);
       return r.rows.map(rowToObj);
     },
     async busy({ hall, month }) {
       await ready;
       const r = await pool.query(
-        `SELECT * FROM bookings WHERE status='active' AND hall=$1 ${month ? 'AND date LIKE $2' : ''}`,
-        month ? [hall, month + '%'] : [hall]
+        `${SELECT} WHERE ${ACTIVE} AND hall=$1 ${month ? "AND to_char(date,'YYYY-MM') = $2" : ''}`,
+        month ? [hall, month] : [hall]
       );
       return r.rows.map(rowToObj);
     },
     async conflicts(hall, slots) {
       await ready;
-      const r = await pool.query(`SELECT date, hour FROM bookings WHERE status='active' AND hall=$1`, [hall]);
+      const r = await pool.query(`SELECT to_char(date,'YYYY-MM-DD') AS date, hour FROM bookings WHERE ${ACTIVE} AND hall=$1`, [hall]);
       return slots.filter((s) => r.rows.some((b) => b.date === s.date && b.hour === s.hour));
     },
     async insert(rows) {
       await ready;
+      const out = [];
       for (const b of rows) {
-        await pool.query(
-          `INSERT INTO bookings (id, hall, date, hour, name, phone, note, status, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,'active',$8)`,
-          [b.id, b.hall, b.date, b.hour, b.name, b.phone, b.note || null, b.createdAt]
+        const r = await pool.query(
+          `INSERT INTO bookings (hall, date, hour, name, phone, note, status, created_at)
+           VALUES ($1,$2::date,$3,$4,$5,$6,$7,$8) RETURNING *, to_char(date,'YYYY-MM-DD') AS date_str`,
+          [b.hall, b.date, b.hour, b.name, b.phone, b.note || null, ACTIVE_STATUS, b.createdAt]
         );
+        out.push(rowToObj(r.rows[0]));
       }
-      return rows;
+      return out;
     },
-    async get(id) { await ready; const r = await pool.query('SELECT * FROM bookings WHERE id=$1', [id]); return r.rows[0] ? rowToObj(r.rows[0]) : null; },
+    async get(id) {
+      await ready;
+      if (!/^\d+$/.test(String(id))) return null;
+      const r = await pool.query(`${SELECT} WHERE id=$1`, [id]);
+      return r.rows[0] ? rowToObj(r.rows[0]) : null;
+    },
     async cancel(id, reason) {
       await ready;
       const r = await pool.query(
-        `UPDATE bookings SET status='cancelled', cancelled_at=now(), cancel_reason=$2 WHERE id=$1 AND status='active' RETURNING *`,
+        `UPDATE bookings SET status='cancelled', cancelled_at=now(), cancel_reason=$2
+         WHERE id=$1 AND ${ACTIVE} RETURNING *, to_char(date,'YYYY-MM-DD') AS date_str`,
         [id, reason || null]
       );
       if (r.rows[0]) return rowToObj(r.rows[0]);
       return this.get(id);
+    },
+    async saveCallback(name, phone) {
+      await ready;
+      await pool.query(`INSERT INTO callbacks (name, phone) VALUES ($1,$2)`, [name, phone]).catch((e) => console.error('[pg] callback', e.message));
     }
   };
 }
@@ -210,8 +240,7 @@ app.post('/api/book', async (req, res) => {
     const conflicts = await store.conflicts(hall, slots);
     if (conflicts.length) return res.status(409).json({ error: 'slot already booked', conflicts });
     const createdAt = new Date().toISOString();
-    const rows = slots.map((s) => ({ id: `${Date.now().toString(36)}-${s.date}-${s.hour}`, hall, date: s.date, hour: s.hour, name, phone, createdAt, status: 'active' }));
-    await store.insert(rows);
+    const rows = await store.insert(slots.map((s) => ({ id: `${Date.now().toString(36)}-${s.date}-${s.hour}`, hall, date: s.date, hour: s.hour, name, phone, createdAt, status: 'active' })));
     await sendTelegramMessage(`📸 <b>Нове бронювання</b>\nЗал: ${HALL_TITLES[hall]}\nГодини:\n${slotsText(slots)}\nІм'я: ${esc(name)}\nТелефон: ${esc(phone)}`);
     res.status(201).json({ ok: true, bookings: rows });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -220,6 +249,7 @@ app.post('/api/book', async (req, res) => {
 app.post('/api/callback', async (req, res) => {
   const { name, phone } = req.body || {};
   if (!name || !phone) return res.status(400).json({ error: 'missing fields' });
+  await store.saveCallback(name, phone);
   await sendTelegramMessage(`☎️ <b>Запит "передзвоніть мені"</b>\nІм'я: ${esc(name)}\nТелефон: ${esc(phone)}`);
   res.status(201).json({ ok: true });
 });
@@ -266,8 +296,7 @@ app.post('/api/admin/bookings', requireAdmin, async (req, res) => {
     const conflicts = await store.conflicts(hall, slots);
     if (conflicts.length) return res.status(409).json({ error: 'slot already booked', conflicts });
     const createdAt = new Date().toISOString();
-    const rows = slots.map((s) => ({ id: `${Date.now().toString(36)}-${s.date}-${s.hour}`, hall, date: s.date, hour: s.hour, name: name || 'Адмін', phone: phone || '', note: note || '', createdAt, status: 'active' }));
-    await store.insert(rows);
+    const rows = await store.insert(slots.map((s) => ({ id: `${Date.now().toString(36)}-${s.date}-${s.hour}`, hall, date: s.date, hour: s.hour, name: name || 'Адмін', phone: phone || '', note: note || '', createdAt, status: 'active' })));
     res.status(201).json({ ok: true, bookings: rows });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
