@@ -38,6 +38,49 @@
 </header>
 
 <!-- ================= PAGE 2 — HALLS ================= -->
+<!-- ================= ПРО НАС ================= -->
+<section class="about" id="about">
+  <div class="about__inner">
+    <div class="about__head">
+      <p class="about__eyebrow">Про нас</p>
+      <h2 class="about__title">PROPHOTO HUB</h2>
+      <p class="about__lead">Фотостудія в самому серці Києва, де кожен квадратний метр створений для натхнення, якісної зйомки та візуального задоволення.</p>
+    </div>
+
+    <div class="about__row">
+      <figure class="about__photo about__photo--wide"><img src="public/assets/about-1.jpg" alt="Зйомка в студії" loading="lazy"></figure>
+      <div class="about__text">
+        <h3>Наші зали</h3>
+        <ul class="about__list">
+          <li>Дві білі циклорами 5×6 м та горизонтальна циклорама 7×3 м у малому залі — для fashion, каталогу або відеозйомки</li>
+          <li>Затишна портретна зала з фонами, стійками, спалахами Profoto та постійним світлом</li>
+          <li>Мейкап-кімната з професійними дзеркалами</li>
+          <li>Кухня і лаунж-зона, щоб зарядитись кавою чи обговорити творчі ідеї</li>
+        </ul>
+        <h3>Місія</h3>
+        <p>Ми працюємо з тими, хто цінує якість, комфорт і сервіс. Тому в нас — завжди тепло, просторо, чисто, привітно.</p>
+        <p class="about__principle">Наш принцип простий: студія — це сцена, але головна роль завжди за тобою.</p>
+      </div>
+    </div>
+
+    <div class="about__row about__row--reverse">
+      <div class="about__photos">
+        <figure class="about__photo"><img src="public/assets/about-2.jpg" alt="Зйомка в студії" loading="lazy"></figure>
+        <figure class="about__photo"><img src="public/assets/about-3.jpg" alt="Портрет у студії" loading="lazy"></figure>
+      </div>
+      <div class="about__text">
+        <p class="about__eyebrow">Вдосконалення</p>
+        <h3 class="about__big">Ми ростемо 13 років — і жодного разу не зупинялись</h3>
+        <p>Жодного разу за 13 років ми не пропустили можливості вдосконалитись. Ми розвивались у складні часи, змінювалися разом із ринком, експериментували, шукали нові форми — і ніколи не стояли на місці.</p>
+        <p>Ми точно знаємо: нас чекають великі зміни. І це лише початок. Тому якщо ти хочеш бути частиною чогось живого, чесного і сильного — приєднуйся до команди PROPHOTO HUB.</p>
+        <p>Тут формується новий простір. І ти можеш бути в його серці.</p>
+        <p class="about__slogan">Приходь. Знімай. Створюй.</p>
+        <a class="about__cta" href="#booking">Забронювати</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="halls" id="halls">
   <div class="halls__grid">
 
@@ -71,73 +114,6 @@
 </section>
 
 <!-- ================= PAGE 3 — BOOKING ================= -->
-<section class="booking" id="booking">
-  <h2 class="section-title section-title--dark">Бронювання</h2>
-
-  <div class="booking__box">
-
-    <div class="booking__step" data-step="1">
-      <p class="booking__step-label">1. Оберіть зал</p>
-      <div class="hall-tabs" id="hallTabs">
-        <button class="hall-tab is-active" data-hall="tsyklorama" type="button">Циклорама</button>
-        <button class="hall-tab" data-hall="podcast" type="button">Подкаст зала</button>
-        <button class="hall-tab" data-hall="grymerna" type="button">Гримерна</button>
-      </div>
-    </div>
-
-    <div class="booking__step" data-step="2">
-      <p class="booking__step-label">2. Оберіть дату та час</p>
-
-      <div class="hour-grid" id="hourGrid">
-        <div class="hour-grid__head">
-          <button class="hour-grid__nav" id="gridPrev" type="button" aria-label="Попередні дні">‹</button>
-          <div class="hour-grid__range">
-            <span id="gridRangeLabel"></span>
-            <button class="hour-grid__today" id="gridToday" type="button">Сьогодні</button>
-          </div>
-          <button class="hour-grid__nav" id="gridNext" type="button" aria-label="Наступні дні">›</button>
-        </div>
-
-        <div class="hour-grid__scroll">
-          <table class="hour-grid__table" id="hourGridTable"></table>
-        </div>
-
-        <p class="hour-grid__legend">
-          <span><span class="legend-dot legend-dot--free"></span>Доступно (ціна за годину)</span>
-          <span><span class="legend-dot legend-dot--booked"></span>Заброньовано / недоступно</span>
-          <button type="button" class="hour-grid__night-toggle" id="gridNight" aria-pressed="false">Показати нічні години (23:00–08:00)</button>
-        </p>
-        <p class="hour-grid__tariff">Денний час 10:00–20:00 — базова ціна · 08:00–10:00 і 20:00–23:00 — +50% · нічний час 23:00–08:00 — +100%</p>
-      </div>
-    </div>
-
-    <form class="booking__step booking-form" data-step="3" id="bookingForm">
-      <p class="booking__step-label">3. Ваші контакти</p>
-
-      <div class="booking-summary" id="bookingSummary">Зал і час ще не обрано</div>
-
-      <label class="field">
-        <span>Ім'я</span>
-        <input type="text" name="name" required placeholder="Ваше ім'я">
-      </label>
-      <label class="field">
-        <span>Номер телефону</span>
-        <input type="tel" name="phone" required placeholder="+380 __ ___ __ __">
-      </label>
-
-      <label class="checkbox">
-        <input type="checkbox" name="consent" required>
-        <span>Даю згоду на обробку персональних даних</span>
-      </label>
-
-      <button type="submit" class="btn-submit">Забронювати</button>
-      <p class="booking-form__status" id="bookingStatus"></p>
-    </form>
-
-  </div>
-</section>
-
-<!-- ================= PAGE 4 — ОБЛАДНАННЯ ================= -->
 <section class="equipment" id="equipment">
   <h2 class="section-title">Обладнання</h2>
 
@@ -243,6 +219,79 @@
   <p class="watermark watermark--light">ФОТОстудія у центрі Києва</p>
 </section>
 
+<section class="booking" id="booking">
+  <h2 class="section-title section-title--dark">Бронювання</h2>
+
+  <div class="booking__box">
+
+    <div class="booking__step" data-step="1">
+      <p class="booking__step-label">1. Оберіть зал</p>
+      <div class="hall-tabs" id="hallTabs">
+        <button class="hall-tab is-active" data-hall="tsyklorama" type="button">Циклорама</button>
+        <button class="hall-tab" data-hall="podcast" type="button">Подкаст зала</button>
+        <button class="hall-tab" data-hall="grymerna" type="button">Гримерна</button>
+      </div>
+    </div>
+
+    <div class="booking__step" data-step="2">
+      <p class="booking__step-label">2. Оберіть дату та час</p>
+
+      <div class="hour-grid" id="hourGrid">
+        <div class="hour-grid__head">
+          <button class="hour-grid__nav" id="gridPrev" type="button" aria-label="Попередні дні">‹</button>
+          <div class="hour-grid__range">
+            <span id="gridRangeLabel"></span>
+            <button class="hour-grid__today" id="gridToday" type="button">Сьогодні</button>
+          </div>
+          <button class="hour-grid__nav" id="gridNext" type="button" aria-label="Наступні дні">›</button>
+        </div>
+
+        <div class="hour-grid__scroll">
+          <table class="hour-grid__table" id="hourGridTable"></table>
+        </div>
+
+        <p class="hour-grid__legend">
+          <span><span class="legend-dot legend-dot--free"></span>Доступно (ціна за годину)</span>
+          <span><span class="legend-dot legend-dot--booked"></span>Заброньовано / недоступно</span>
+          <button type="button" class="hour-grid__night-toggle" id="gridNight" aria-pressed="false">Показати нічні години (23:00 — 08:00)</button>
+        </p>
+        <div class="hour-grid__tariff">
+          <span><b>Денний час</b> 10:00 — 20:00</span>
+          <span>08:00 — 10:00, 20:00 — 23:00 <b>+50% до вартості</b></span>
+          <span><b>Нічний час</b> 23:00 — 08:00 <b>+100% до вартості</b></span>
+        </div>
+      </div>
+    </div>
+
+    <form class="booking__step booking-form" data-step="3" id="bookingForm">
+      <p class="booking__step-label">3. Ваші контакти</p>
+
+      <div class="booking-summary" id="bookingSummary">Зал і час ще не обрано</div>
+
+      <label class="field">
+        <span>Ім'я</span>
+        <input type="text" name="name" required placeholder="Ваше ім'я">
+      </label>
+      <label class="field">
+        <span>Номер телефону</span>
+        <input type="tel" name="phone" required placeholder="+380 __ ___ __ __">
+      </label>
+
+      <label class="checkbox">
+        <input type="checkbox" name="consent" required>
+        <span>Даю згоду на обробку персональних даних</span>
+      </label>
+
+      <button type="submit" class="btn-submit">Забронювати</button>
+      <p class="booking-form__status" id="bookingStatus"></p>
+    </form>
+
+  </div>
+</section>
+
+<!-- ================= PAGE 4 — ОБЛАДНАННЯ ================= -->
+
+
 <!-- ================= PAGE 5 — CONTACTS ================= -->
 <footer class="contacts" id="contacts">
   <h2 class="section-title">Контакти</h2>
@@ -251,7 +300,8 @@
   <div class="contacts__grid">
     <div class="contacts__col">
       <p class="contacts__label">Адреса:</p>
-      <p class="contacts__text">м. Київ,<br>вул. Саксаганського 24/25<br>2 під'їзд, 2 поверх</p>
+      <p class="contacts__text">м. Київ,<br>вул. Саксаганського 24/25, оф. 13<br>2 під'їзд, 2 поверх</p>
+      <p class="contacts__text"><a class="contacts__map" href="https://maps.app.goo.gl/wGjkixcAr3j2Jbqw6" target="_blank" rel="noopener">Відкрити на мапі &rarr;</a></p>
     </div>
 
     <div class="contacts__col">
@@ -265,6 +315,7 @@
       <p class="contacts__text">
         <button type="button" class="contacts__phone-btn" id="contactsCallBtn">096 451 50 10</button>
       </p>
+      <p class="contacts__text"><a class="contacts__mail" href="mailto:fotostudio.mail@gmail.com">fotostudio.mail@gmail.com</a></p>
     </div>
 
     <div class="contacts__col">
@@ -307,6 +358,6 @@
 <script src="js/halls-data.js"></script>
 <script src="js/hall-card.js"></script>
 <script src="js/main.js"></script>
-<script src="js/prophoto-nav.js" data-site="studio" data-mode="fixed"></script>
+<script src="js/prophoto-nav.js" data-site="studio" data-mode="fixed" data-menu="site"></script>
 </body>
 </html>

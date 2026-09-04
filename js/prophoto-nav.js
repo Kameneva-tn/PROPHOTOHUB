@@ -52,6 +52,18 @@
       items: [['Магазин обладнання', URLS.shop, 'shop']] }
   ];
 
+  // Тимчасове просте меню для сайту студії (data-menu="site")
+  var SITE_MENU = {
+    studio: [
+      ['PROPHOTO HUB', URLS.studio, 'home'],
+      ['Про нас', URLS.studio + '#about', 'about'],
+      ['Циклорама', URLS.cyclorama, 'cyclorama'],
+      ['Контент зал', URLS.content, 'content'],
+      ['Гримерна', URLS.makeup, 'makeup'],
+      ['Контакти', URLS.studio + '#contacts', 'contacts']
+    ]
+  };
+
   var CSS = '\
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap");\
 .pp-nav{--pp-ink:#f2f0eb;--pp-dim:#6f6d6a;--pp-bg:#1c1a19;font-family:Inter,Arial,sans-serif;color:var(--pp-ink);left:0;right:0;top:0;z-index:900;box-sizing:border-box}\
@@ -90,6 +102,10 @@
 .pp-menu__link{display:block;color:#7a7876;text-decoration:none;text-transform:uppercase;font-weight:300;font-size:clamp(15px,1.4vw,20px);letter-spacing:.04em;line-height:1.25;padding:9px 0;transition:color .2s,padding-left .2s;max-width:18ch}\
 .pp-menu__link:hover{color:#f2f0eb;padding-left:6px}\
 .pp-menu__link.is-on{color:#f2f0eb}\
+.pp-menu__site{display:flex;flex-direction:column;gap:6px;align-items:flex-start}\
+.pp-menu__site a{color:#8a8886;text-decoration:none;text-transform:uppercase;font-weight:300;font-size:clamp(24px,3.4vw,44px);letter-spacing:.02em;line-height:1.25;padding:6px 0;transition:color .2s,padding-left .2s}\
+.pp-menu__site a:first-child{font-weight:900;color:#f2f0eb;letter-spacing:-.01em}\
+.pp-menu__site a:hover,.pp-menu__site a.is-on{color:#f2f0eb;padding-left:8px}\
 .pp-menu__foot{margin-top:70px;display:flex;gap:40px;flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity .5s .3s}\
 .pp-menu.open .pp-menu__foot{opacity:1}\
 .pp-menu__foot a{color:#8a8886;text-decoration:none;text-transform:uppercase;font-size:12px;letter-spacing:.16em;font-weight:400;transition:color .2s}\
@@ -104,6 +120,7 @@ body.pp-menu-lock{overflow:hidden}';
   var siteKey = (script && script.getAttribute('data-site')) || 'studio';
   var page = (script && script.getAttribute('data-page')) || '';
   var mode = (script && script.getAttribute('data-mode')) || 'fixed';
+  var menuKind = (script && script.getAttribute('data-menu')) || 'ecosystem';
   var site = SITES[siteKey] || SITES.studio;
   var mount = document.getElementById('prophoto-nav');
 
@@ -137,9 +154,17 @@ body.pp-menu-lock{overflow:hidden}';
   menu.className = 'pp-menu';
   menu.id = 'ppMenu';
   menu.setAttribute('aria-hidden', 'true');
-  menu.innerHTML =
-    '<div class="pp-menu__inner">' + cols + '</div>' +
-    '<div class="pp-menu__foot"><a href="' + esc(URLS.main) + '"><b>PROPHOTO</b> — головна</a><a href="' + esc(URLS.contacts) + '">Контакти</a></div>';
+  if (menuKind === 'site' && SITE_MENU[siteKey]) {
+    menu.innerHTML = '<nav class="pp-menu__site">' + SITE_MENU[siteKey].map(function (l) {
+      return '<a href="' + esc(l[1]) + '"' + (l[2] === page ? ' class="is-on"' : '') + '>' + esc(l[0]) + '</a>';
+    }).join('') + '</nav>';
+  } else {
+    menu.innerHTML =
+      '<div class="pp-menu__inner">' + cols + '</div>' +
+      '<div class="pp-menu__foot"><a href="' + esc(URLS.main) + '"><b>PROPHOTO</b> — головна</a><a href="' + esc(URLS.contacts) + '">Контакти</a></div>';
+  }
+  // закриваємо меню при кліку на якір на цій же сторінці
+  menu.addEventListener('click', function (e) { var a = e.target.closest('a'); if (a && a.getAttribute('href').indexOf('#') !== -1) setTimeout(function () { setOpen(false); }, 50); });
 
   if (mount) { mount.appendChild(nav); } else { document.body.insertBefore(nav, document.body.firstChild); }
   document.body.appendChild(menu);

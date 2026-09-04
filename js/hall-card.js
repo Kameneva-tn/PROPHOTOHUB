@@ -6,7 +6,7 @@ function renderHallCard(hallKey, opts) {
   opts = opts || {};
   const evePct = Math.round((EVENING_MULTIPLIER - 1) * 100), nightPct = Math.round((NIGHT_MULTIPLIER - 1) * 100);
   const price = h.rate != null
-    ? `<p class="hall-card__price-amount">Оренда: ${h.rate} грн/год</p><p class="hall-card__price-note">10:00–20:00 · 08–10 і 20–23: +${evePct}% · 23–08: +${nightPct}%</p>`
+    ? `<p class="hall-card__price-amount">Оренда: ${h.rate} грн/год</p><div class="hall-card__price-note"><span>10:00 — 20:00</span></div><div class="hall-card__price-note"><span>08:00 — 10:00</span><span>20:00 — 23:00</span><b>+${evePct}% до вартості</b></div><div class="hall-card__price-note"><span>23:00 — 08:00</span><b>+${nightPct}% до вартості</b></div>`
     : `<p class="hall-card__price-amount">Ціна уточнюється</p>`;
   const more = opts.link === false ? '' : `<span class="hall-card__more">Дивитись залу &rarr;</span>`;
   return `
